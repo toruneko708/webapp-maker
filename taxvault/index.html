@@ -159,8 +159,9 @@ footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}fo
   <div class="card reveal">
     <div class="card-head"><span class="card-title">条件を入力</span></div>
     <div class="card-body"><div class="field-grid">
-      <div class="field"><div class="fl"><label>月額売上</label></div>
-        <div class="num"><span class="pre">¥</span><input type="number" id="sales" value="800000" step="10000"></div></div>
+      <div class="field"><div class="fl"><label>月額売上（税抜）</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="sales" value="800000" step="10000"></div>
+        <div class="hint">税抜売上。経費・各税率はこれに掛かります</div></div>
       <div class="field"><div class="fl"><label>経費率</label><span class="val"><span id="expV">30</span>%</span></div>
         <input type="range" id="exp" min="0" max="80" step="1" value="30"></div>
       <div class="field"><div class="fl"><label>所得税率（目安）</label><span class="val"><span id="incV">20</span>%</span></div>
@@ -207,7 +208,7 @@ function calc(){
   const income=Math.max(S-expAmt,0);
   const incAmt=income*inc/100, resAmt=income*res/100, busAmt=income*bus/100;
   let conAmt=0;
-  if(taxable){conAmt = special ? S*0.02 : S*0.063;}
+  if(taxable){conAmt = special ? S*0.02 : income*0.1;}
   const reserve=conAmt+incAmt+resAmt+busAmt;
   const keep=S-expAmt-reserve;
   // stack widths (of S)

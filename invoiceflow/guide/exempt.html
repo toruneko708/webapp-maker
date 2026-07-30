@@ -23,7 +23,7 @@
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"免税事業者からの仕入は控除できますか？","acceptedAnswer":{"@type":"Answer","text":"原則はできませんが、経過措置により一定期間は仕入税額相当額の一部を控除できます。2026年9月までは80%、2029年9月までは50%、それ以降は控除不可です。"}},
+{"@type":"Question","name":"免税事業者からの仕入は控除できますか？","acceptedAnswer":{"@type":"Answer","text":"原則はできませんが、経過措置により一定期間は仕入税額相当額の一部を控除できます。2026年9月までは80%、2028年9月までは70%、2030年9月までは50%、2031年9月までは30%、それ以降は控除不可です。"}},
 {"@type":"Question","name":"経過措置を受ける条件は？","acceptedAnswer":{"@type":"Answer","text":"免税事業者等からの課税仕入であること、および帳簿と請求書等に必要な事項（経過措置適用の旨など）を記載していることが条件です。"}},
 {"@type":"Question","name":"2割特例と同じものですか？","acceptedAnswer":{"@type":"Answer","text":"違います。2割特例は免税事業者が課税事業者になった際の納税額計算の特例で、受け取る側の仕入税額控除の経過措置とは別の制度です。"}},
 {"@type":"Question","name":"取引先が免税事業者のままでも取引していい？","acceptedAnswer":{"@type":"Answer","text":"取引自体は可能です。ただし経過措置が終わるほど控除できない税額が増え、実質コストになります。価格交渉や登録の検討材料として数字で把握しておくことが重要です。"}}
@@ -73,13 +73,13 @@ h1 .accent{color:var(--shu)}
 .article-body a:hover{border-bottom-color:var(--ai)}
 
 /* timeline */
-.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:24px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:24px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
 .tl{padding:18px 16px;text-align:center;border-right:1px solid var(--line);position:relative;transition:background .3s}
 .tl:last-child{border-right:none}
 .tl .pct{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1}
 .tl .rng{font-size:11px;color:var(--sumi-soft);margin-top:6px;font-family:var(--mono)}
 .tl .lab{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--sumi-soft);margin-top:4px}
-.tl.t80 .pct{color:var(--ai)}.tl.t50 .pct{color:#5a7bb0}.tl.t0 .pct{color:var(--shu)}
+.tl.t80 .pct{color:var(--ai)}.tl.t70 .pct{color:#5a7bb0}.tl.t50 .pct{color:#9a6b12}.tl.t30 .pct{color:#e8766c}.tl.t0 .pct{color:var(--shu)}
 .tl.active{background:var(--paper-2)}
 .tl.active::after{content:"◀ 現在";position:absolute;top:6px;right:8px;font-size:9px;font-weight:800;color:var(--shu);letter-spacing:.08em}
 
@@ -98,12 +98,14 @@ h1 .accent{color:var(--shu)}
 
 .result{margin-top:22px;border-radius:8px;padding:22px 24px;border:2px solid var(--line);background:var(--paper);transition:all .4s}
 .result.r80{border-color:var(--ai);background:var(--ai-soft)}
-.result.r50{border-color:#5a7bb0;background:#eef2f8}
+.result.r70{border-color:#5a7bb0;background:#eef2f8}
+.result.r50{border-color:#e0a23a;background:#fdf6e8}
+.result.r30{border-color:#e8766c;background:#fce8e6}
 .result.r0{border-color:var(--shu);background:#fdecea}
 .result .rhead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .result .rperiod{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft)}
 .result .rpct{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1}
-.result.r80 .rpct{color:var(--ai)}.result.r50 .rpct{color:#5a7bb0}.result.r0 .rpct{color:var(--shu)}
+.result.r80 .rpct{color:var(--ai)}.result.r70 .rpct{color:#5a7bb0}.result.r50 .rpct{color:#9a6b12}.result.r30 .rpct{color:#e8766c}.result.r0 .rpct{color:var(--shu)}
 .rrows{margin-top:14px;display:grid;gap:6px}
 .rrow{display:flex;justify-content:space-between;font-size:14px}
 .rrow .v{font-family:var(--mono);font-weight:600}
@@ -157,13 +159,15 @@ footer a:hover{color:var(--shu)}
 </header>
 
 <main class="wrap article-body">
-  <h2>経過措置の3段階</h2>
-  <p>免税事業者等からの課税仕入について、仕入税額相当額の一部を控除できる経過措置が設けられています。期間は3段階で、徐々に縮小していきます。</p>
+  <h2>経過措置の5段階</h2>
+  <p>免税事業者等からの課税仕入について、仕入税額相当額の一部を控除できる経過措置が設けられています。期間は5段階で、徐々に縮小していきます。</p>
 
   <div class="timeline" id="timeline">
     <div class="tl t80" data-k="80"><div class="pct">80%</div><div class="rng">2023/10 – 2026/09</div><div class="lab">控除可能</div></div>
-    <div class="tl t50" data-k="50"><div class="pct">50%</div><div class="rng">2026/10 – 2029/09</div><div class="lab">控除可能</div></div>
-    <div class="tl t0" data-k="0"><div class="pct">0%</div><div class="rng">2029/10 –</div><div class="lab">控除不可</div></div>
+    <div class="tl t70" data-k="70"><div class="pct">70%</div><div class="rng">2026/10 – 2028/09</div><div class="lab">控除可能</div></div>
+    <div class="tl t50" data-k="50"><div class="pct">50%</div><div class="rng">2028/10 – 2030/09</div><div class="lab">控除可能</div></div>
+    <div class="tl t30" data-k="30"><div class="pct">30%</div><div class="rng">2030/10 – 2031/09</div><div class="lab">控除可能</div></div>
+    <div class="tl t0" data-k="0"><div class="pct">0%</div><div class="rng">2031/10 –</div><div class="lab">控除不可</div></div>
   </div>
 
   <h2>取引日で控除額を計算</h2>
@@ -247,8 +251,10 @@ function periodOf(dateStr){
   const ym=y*100+m;
   if(ym < 202310) return {k:null, label:'制度開始前（2023/10以前）', note:'インボイス制度開始前の取引です。経過措置の対象期間外。'};
   if(ym <= 202609) return {k:80, label:'2023/10 – 2026/09 の取引'};
-  if(ym <= 202909) return {k:50, label:'2026/10 – 2029/09 の取引'};
-  return {k:0, label:'2029/10 以降の取引'};
+  if(ym <= 202809) return {k:70, label:'2026/10 – 2028/09 の取引'};
+  if(ym <= 203009) return {k:50, label:'2028/10 – 2030/09 の取引'};
+  if(ym <= 203109) return {k:30, label:'2030/10 – 2031/09 の取引'};
+  return {k:0, label:'2031/10 以降の取引'};
 }
 
 function calc(){
