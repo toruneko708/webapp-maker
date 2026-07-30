@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VersaRate — 2つの案件、どっちを捨てる？を実質価値で天秤にかける</title>
+<meta name="description" content="2つの案件・働き方を、手数料・工数・源泉を引いた実質時給と年間手残りで並べて比較。時給で切るか年間総額で切るかで結論が割れるケースを可視化し、どちらを見送るかの判断を数字で支える。">
+<link rel="canonical" href="https://versarate.pages.dev/">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VersaRate">
+<meta property="og:title" content="VersaRate — 2つの案件、どっちを捨てる？">
+<meta property="og:description" content="2つの選択肢を実質時給と年間手残りで天秤にかける。指標の優先順で、見送る案件が変わる。">
+<meta property="og:url" content="https://versarate.pages.dev/">
+<meta property="og:image" content="https://versarate.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://versarate.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"VersaRate","url":"https://versarate.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","description":"2つの案件・働き方を実質時給と年間手残りで比較する天秤シミュレーター。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"報酬が高い案件の方が得ですか？","acceptedAnswer":{"@type":"Answer","text":"必ずしもそうではありません。プラットフォーム手数料・想定工数・源泉徴収を引いた後の実質時給で比べると、報酬が低い案件の方が得になることがあります。"}},
+{"@type":"Question","name":"時給と年間総額で結論が違うのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"時給は1時間あたりの効率、年間総額は1年分の手残り総額を見る指標だからです。工数が大きい案件は時給が低くても年間では積み上がる場合があり、どちらを優先するかで選ぶ案件が変わります。"}},
+{"@type":"Question","name":"クラウドソーシング経由と直取引、どちらが良いですか？","acceptedAnswer":{"@type":"Answer","text":"手数料と獲得工数次第です。手数料20%でも工数が読めて単価が高いなら経由が勝ち、直取引で手数料0でも営業・調整の工数が乗るなら負けになり得ます。数字を入れて比べてください。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;
+  --shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;
+  --ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;
+  --mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
+  repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}
+.brand-mark em{font-style:normal;color:var(--shu)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}
+.nav-links a:hover{color:var(--shu)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-shu{background:var(--shu);color:#fff;box-shadow:0 2px 0 var(--shu-dark)}
+.btn-shu:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(214,59,47,.32),0 2px 0 var(--shu-dark)}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.btn-paper{background:var(--paper);color:var(--shu);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.btn-paper:hover{transform:translateY(-2px)}
+
+.hero{padding:72px 0 36px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(38px,5.4vw,64px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--shu);position:relative;white-space:nowrap}
+h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(214,59,47,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:42ch;margin-bottom:26px}
+.hero-proof{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}
+.hero-proof span{display:inline-flex;align-items:center;gap:6px}
+.hero-proof b{color:var(--shu);font-weight:700}
+
+/* scale visual */
+.scale-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px 26px 22px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12)}
+.scale-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.scale-top .lbl{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--sumi-soft);text-transform:uppercase}
+.verdict-chip{font-size:11px;font-weight:800;letter-spacing:.06em;padding:6px 12px;border-radius:2px;background:var(--paper-2);color:var(--sumi-soft);transition:all .4s;text-align:right;max-width:60%}
+.verdict-chip.split{background:#fdf6e8;color:#9a6b12}
+.verdict-chip.win{background:var(--ok-soft);color:var(--ok)}
+.scale-stage{display:flex;align-items:flex-end;justify-content:center;gap:30px;height:188px;position:relative;padding-bottom:30px;border-bottom:2px solid var(--sumi)}
+.scale-stage::after{content:"";position:absolute;left:50%;top:8px;bottom:30px;width:2px;background:var(--line)}
+.bar-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;width:96px;position:relative}
+.bar{width:64px;border-radius:5px 5px 0 0;transition:height .55s cubic-bezier(.2,.8,.2,1),background .4s,border-color .4s;min-height:4px}
+.bar.a{background:var(--ai)}.bar.b{background:var(--ai)}
+.bar.lose{background:transparent;border:2px dashed var(--shu)}
+.bar-rate{font-family:var(--mono);font-weight:600;font-size:15px;margin-bottom:6px;transition:color .4s}
+.bar-rate.lose{color:var(--shu)}
+.bar-name{position:absolute;bottom:-26px;font-size:12px;font-weight:700;letter-spacing:.06em}
+.bar-tag{position:absolute;top:-22px;font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--ok);opacity:0;transition:opacity .4s}
+.bar-tag.show{opacity:1}
+.vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mincho);font-weight:800;font-size:18px;color:var(--shu);background:#fff;padding:2px 8px;border-radius:50%;z-index:2}
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px}
+.dual .d{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px;transition:border-color .3s}
+.dual .d.win{border-color:var(--ok)}
+.dual .d .dl{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--sumi-soft)}
+.dual .d .dv{font-family:var(--mono);font-weight:600;font-size:15px;margin-top:3px}
+.dual .d .dw{font-size:10px;font-weight:800;color:var(--ok);margin-top:2px;min-height:13px}
+
+/* inputs */
+.inputs{padding:14px 0 70px}
+.common{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 22px;margin-bottom:18px;box-shadow:0 1px 2px rgba(28,33,40,.05);display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end}
+.common .cg{display:flex;flex-direction:column;gap:5px}
+.common .cg label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--sumi-soft)}
+.seg{display:inline-flex;border:1px solid var(--ledger);border-radius:4px;overflow:hidden}
+.seg button{border:none;background:#fff;padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--sumi-soft);cursor:pointer;font-family:var(--gothic);transition:all .15s}
+.seg button.on{background:var(--sumi);color:#fff}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff}
+.num .pre,.num .suf{padding:0 10px;color:var(--sumi-soft);font-size:13px;background:var(--paper);align-self:stretch;display:flex;align-items:center}
+.num .pre{border-right:1px solid var(--ledger)}.num .suf{border-left:1px solid var(--ledger)}
+.num input{border:none;outline:none;padding:9px 10px;font-size:14px;font-family:var(--mono);font-weight:500;width:96px;color:var(--sumi);background:transparent}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+.opt{background:#fff;border:2px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05);transition:border-color .3s,box-shadow .3s}
+.opt.winA{border-color:var(--ok);box-shadow:0 10px 30px rgba(46,125,67,.12)}
+.opt.winB{border-color:var(--ok);box-shadow:0 10px 30px rgba(46,125,67,.12)}
+.opt.lose{border-color:var(--line);opacity:.92}
+.opt-head{padding:14px 20px;border-bottom:1px solid var(--paper-2);display:flex;align-items:center;justify-content:space-between}
+.opt-name{font-family:var(--mincho);font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px}
+.opt-name .tag{font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;background:var(--ai);width:22px;height:22px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center}
+.opt.optB .opt-name .tag{background:var(--shu)}
+.opt-status{font-size:10.5px;font-weight:800;letter-spacing:.06em;padding:4px 10px;border-radius:2px;background:var(--paper-2);color:var(--sumi-soft)}
+.opt-status.pick{background:var(--ok-soft);color:var(--ok)}
+.opt-status.pass{background:#fdecea;color:var(--shu)}
+.opt-body{padding:18px 20px;display:grid;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field .fl{display:flex;justify-content:space-between;align-items:baseline}
+.field .fl label{font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)}
+.field .fl .val{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--shu)}
+.field .num input{width:100%}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--ledger);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;box-shadow:0 1px 4px rgba(214,59,47,.4);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;cursor:pointer}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.switch{position:relative;width:42px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:var(--ledger);border-radius:99px;cursor:pointer;transition:.25s}
+.slider-sw::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider-sw{background:var(--ai)}
+.switch input:checked+.slider-sw::before{transform:translateX(18px)}
+.opt-result{margin-top:4px;border-top:1px dashed var(--line);padding-top:14px;display:grid;gap:7px}
+.or{display:flex;justify-content:space-between;font-size:13px;color:var(--sumi-soft)}
+.or .v{font-family:var(--mono);font-weight:600;color:var(--sumi)}
+.or.big{font-size:15px;font-weight:700;color:var(--sumi)}
+.or.big .v{font-size:18px;color:var(--ok)}
+.or .v.neg{color:var(--shu)}
+.hint{font-size:10.5px;color:var(--sumi-soft)}
+
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"秤";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#ff9d94}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+
+.cta{background:var(--shu);color:#fff;padding:72px 0;position:relative;overflow:hidden}
+.cta::before{content:"⇄";position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:280px;line-height:1;color:rgba(255,255,255,.08)}
+.cta-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.cta h2{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.35;color:#fff;max-width:20ch}
+
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}
+.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}
+footer a:hover{color:var(--shu)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div>
+<div class="margin-line"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#"><span class="brand-mark">Versa<em>Rate</em></span><span class="brand-sub">2択の天秤</span></a>
+    <div class="nav-links">
+      <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+      <a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a>
+      <a class="btn btn-shu" href="#calc">比べる →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">比較する道具</span>
+      <h1>どっちを、<br><span class="accent">捨てる</span>？</h1>
+      <p class="hero-lead">
+        2つの案件、2つの働き方。報酬の大きさだけでは見えない。
+        手数料・工数・源泉を引いた後の「実質の時給」と「年間の手残り」で天秤にかける。
+        指標の優先順を決めた瞬間、見送る方が決まります。
+      </p>
+      <div class="hero-proof">
+        <span><b>✓</b> 登録不要</span>
+        <span><b>✓</b> ずっと無料</span>
+        <span><b>✓</b> 計算はブラウザ内</span>
+      </div>
+    </div>
+
+    <div class="scale-card">
+      <div class="scale-top">
+        <span class="lbl">実質時給で天秤</span>
+        <span class="verdict-chip" id="vChip">—</span>
+      </div>
+      <div class="scale-stage">
+        <div class="bar-col">
+          <div class="bar-tag" id="tagA">採用</div>
+          <div class="bar-rate" id="rateA">¥0</div>
+          <div class="bar a" id="barA" style="height:10%"></div>
+          <div class="bar-name">A</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="bar-col">
+          <div class="bar-tag" id="tagB">採用</div>
+          <div class="bar-rate" id="rateB">¥0</div>
+          <div class="bar b" id="barB" style="height:10%"></div>
+          <div class="bar-name">B</div>
+        </div>
+      </div>
+      <div class="dual">
+        <div class="d" id="dRate"><div class="dl">時給で選ぶなら</div><div class="dv" id="dRateV">—</div><div class="dw" id="dRateW"></div></div>
+        <div class="d" id="dYear"><div class="dl">年間総額で選ぶなら</div><div class="dv" id="dYearV">—</div><div class="dw" id="dYearW"></div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="inputs" id="calc">
+  <div class="wrap">
+    <div class="common reveal">
+      <div class="cg">
+        <label>報酬の表示</label>
+        <div class="seg" id="taxSeg"><button data-v="ex" class="on">税抜</button><button data-v="in">税込</button></div>
+      </div>
+      <div class="cg">
+        <label>最低欲しい時給</label>
+        <div class="num"><span class="pre">¥</span><input type="number" id="minRate" value="3000" step="100"></div>
+      </div>
+      <div class="cg">
+        <label>年間の想定本数</label>
+        <div class="num"><input type="number" id="pieces" value="10" min="1" step="1"><span class="suf">本</span></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <!-- OPTION A -->
+      <div class="opt optA reveal" id="optA">
+        <div class="opt-head">
+          <span class="opt-name"><span class="tag">A</span><input class="opt-title" id="nameA" value="クラウドソーシング経由" style="border:none;outline:none;font:inherit;background:transparent;width:100%"></span>
+          <span class="opt-status" id="stA">—</span>
+        </div>
+        <div class="opt-body">
+          <div class="field"><div class="fl"><label>報酬</label></div>
+            <div class="num"><span class="pre">¥</span><input type="number" id="rA" value="200000" step="1000"></div></div>
+          <div class="field"><div class="fl"><label>想定工数</label><span class="val"><span id="hAv">50</span> h</span></div>
+            <input type="range" id="hA" min="1" max="400" step="1" value="50"></div>
+          <div class="field"><div class="fl"><label>手数料</label><span class="val"><span id="fAv">20</span>%</span></div>
+            <input type="range" id="fA" min="0" max="40" step="0.5" value="20">
+            <div class="hint">直取引なら 0%</div></div>
+          <div class="field"><div class="fl"><label>経費率</label><span class="val"><span id="eAv">5</span>%</span></div>
+            <input type="range" id="eA" min="0" max="60" step="1" value="5"></div>
+          <div class="field">
+            <div class="toggle-row"><label style="font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)">源泉徴収</label>
+              <label class="switch"><input type="checkbox" id="gA"><span class="slider-sw"></span></label></div>
+            <div class="num" style="margin-top:7px"><input type="number" id="grA" value="10.21" step="0.01"><span class="suf">%</span></div></div>
+          <div class="opt-result">
+            <div class="or"><span>実質時給</span><span class="v" id="orA_rate">¥0</span></div>
+            <div class="or"><span>1本の手残り</span><span class="v" id="orA_keep">¥0</span></div>
+            <div class="or"><span>年間手残り</span><span class="v" id="orA_year">¥0</span></div>
+            <div class="or big"><span>最低時給との差</span><span class="v" id="orA_diff">¥0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION B -->
+      <div class="opt optB reveal d1" id="optB">
+        <div class="opt-head">
+          <span class="opt-name"><span class="tag">B</span><input class="opt-title" id="nameB" value="直取引" style="border:none;outline:none;font:inherit;background:transparent;width:100%"></span>
+          <span class="opt-status" id="stB">—</span>
+        </div>
+        <div class="opt-body">
+          <div class="field"><div class="fl"><label>報酬</label></div>
+            <div class="num"><span class="pre">¥</span><input type="number" id="rB" value="180000" step="1000"></div></div>
+          <div class="field"><div class="fl"><label>想定工数</label><span class="val"><span id="hBv">40</span> h</span></div>
+            <input type="range" id="hB" min="1" max="400" step="1" value="40"></div>
+          <div class="field"><div class="fl"><label>手数料</label><span class="val"><span id="fBv">0</span>%</span></div>
+            <input type="range" id="fB" min="0" max="40" step="0.5" value="0">
+            <div class="hint">直取引なら 0%</div></div>
+          <div class="field"><div class="fl"><label>経費率</label><span class="val"><span id="eBv">10</span>%</span></div>
+            <input type="range" id="eB" min="0" max="60" step="1" value="10"></div>
+          <div class="field">
+            <div class="toggle-row"><label style="font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)">源泉徴収</label>
+              <label class="switch"><input type="checkbox" id="gB" checked><span class="slider-sw"></span></label></div>
+            <div class="num" style="margin-top:7px"><input type="number" id="grB" value="10.21" step="0.01"><span class="suf">%</span></div></div>
+          <div class="opt-result">
+            <div class="or"><span>実質時給</span><span class="v" id="orB_rate">¥0</span></div>
+            <div class="or"><span>1本の手残り</span><span class="v" id="orB_keep">¥0</span></div>
+            <div class="or"><span>年間手残り</span><span class="v" id="orB_year">¥0</span></div>
+            <div class="or big"><span>最低時給との差</span><span class="v" id="orB_diff">¥0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="memo-sec">
+  <div class="wrap">
+    <div class="memo reveal">
+      <span class="sec-no">JUDGMENT — 判断の順番</span>
+      <h2>報酬の大きさで、<span class="accent">選ばない</span>。</h2>
+      <p>
+        2つの案件を並べた時、報酬が高い方を reflex で選ぶ。でも手数料20%のプラットフォームで
+        工数が読めない案件は、時給に直すと最低賃金を割る。一方、報酬が安く見えた直取引が、
+        手数料ゼロ・工数確定で時給を押し上げる。
+        さらに厄介なのは、時給で切るか年間総額で切るかで結論が割れること。
+        工数が大きい案件は時給が低くても、年間で積めば勝つ。
+        どっちの指標を先に置くか——その順番を決めた瞬間、捨てる方が決まる。
+        判断を気合じゃなく、秤に任せる道具です。
+      </p>
+      <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap cta-inner">
+    <h2>次の2択、数字で秤にかけてから決めよう。</h2>
+    <a class="btn btn-paper" href="#calc">もう一度比べる ↑</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div>
+      <div class="foot-brand">Versa<em>Rate</em></div>
+      <div style="margin-top:4px">2択の実質価値シミュレーター</div>
+    </div>
+    <div class="foot-tools">
+      <a href="https://truerate.pages.dev/">TrueRate</a>
+      <a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a>
+      <a href="https://tekicheck.pages.dev/">TekiCheck</a>
+      <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+      <a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a>
+    </div>
+    <div>© 2026</div>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+let taxMode='ex';
+
+document.querySelectorAll('#taxSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#taxSeg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');taxMode=b.dataset.v;calc();
+}));
+
+// live slider labels
+[['hA','hAv'],['hB','hBv'],['fA','fAv'],['fB','fBv'],['eA','eAv'],['eB','eBv']].forEach(([s,l])=>{
+  $(s).addEventListener('input',()=>{$(l).textContent=$(s).value;calc();});
+});
+['rA','rB','grA','grB','gA','gB','minRate','pieces'].forEach(id=>$(id).addEventListener('input',calc));
+
+function side(p){
+  const reward=parseFloat($('r'+p).value)||0;
+  const hours=Math.max(parseFloat($('h'+p).value)||1,1);
+  const feeR=parseFloat($('f'+p).value)||0;
+  const expR=parseFloat($('e'+p).value)||0;
+  const genOn=$('g'+p).checked;
+  const genR=parseFloat($('gr'+p).value)||0;
+  const sales=taxMode==='in'?reward/1.10:reward;
+  const fee=sales*feeR/100, exp=sales*expR/100, gen=genOn?sales*genR/100:0;
+  const keep=sales-fee-exp-gen;
+  const rate=keep/hours;
+  return {sales,keep,rate};
+}
+
+function calc(){
+  const A=side('A'), B=side('B');
+  const pieces=Math.max(parseFloat($('pieces').value)||1,1);
+  const minRate=parseFloat($('minRate').value)||0;
+  const yA=A.keep*pieces, yB=B.keep*pieces;
+
+  // per-side readouts
+  $('orA_rate').textContent=fmt(A.rate); $('orA_keep').textContent=fmt(A.keep); $('orA_year').textContent=fmt(yA);
+  $('orB_rate').textContent=fmt(B.rate); $('orB_keep').textContent=fmt(B.keep); $('orB_year').textContent=fmt(yB);
+  const dA=A.rate-minRate, dB=B.rate-minRate;
+  $('orA_diff').textContent=(dA>=0?'+':'')+fmt(dA); $('orA_diff').className='v'+(dA<0?' neg':'');
+  $('orB_diff').textContent=(dB>=0?'+':'')+fmt(dB); $('orB_diff').className='v'+(dB<0?' neg':'');
+
+  // winners per metric
+  const rateWin = A.rate===B.rate?0:(A.rate>B.rate?'A':'B');
+  const yearWin = yA===yB?0:(yA>yB?'A':'B');
+
+  // bars (rate-normalized)
+  const maxR=Math.max(A.rate,B.rate,1);
+  $('barA').style.height=Math.max(A.rate/maxR*100,4)+'%';
+  $('barB').style.height=Math.max(B.rate/maxR*100,4)+'%';
+  $('rateA').textContent=fmt(A.rate); $('rateB').textContent=fmt(B.rate);
+  // rate-based lose styling on bars
+  $('barA').className='bar a'+(rateWin==='B'?' lose':''); $('barB').className='bar b'+(rateWin==='A'?' lose':'');
+  $('rateA').className='bar-rate'+(rateWin==='B'?' lose':''); $('rateB').className='bar-rate'+(rateWin==='A'?' lose':'');
+  $('tagA').className='bar-tag'+(rateWin==='A'?' show':''); $('tagB').className='bar-tag'+(rateWin==='B'?' show':'');
+
+  // dual metric boxes
+  $('dRateV').textContent = rateWin? ('選択肢 '+rateWin) : '同等';
+  $('dYearV').textContent = yearWin? ('選択肢 '+yearWin) : '同等';
+  $('dRate').className='d'+(rateWin?' win':''); $('dYear').className='d'+(yearWin?' win':'');
+  $('dRateW').textContent = rateWin? ('時給 '+fmt(rateWin==='A'?A.rate:B.rate)+'/h') : '';
+  $('dYearW').textContent = yearWin? ('年間 '+fmt(yearWin==='A'?yA:yB)) : '';
+
+  // verdict chip + option status (rate as primary, but surface split)
+  const chip=$('vChip');
+  const split = rateWin && yearWin && rateWin!==yearWin;
+  if(!rateWin && !yearWin){ chip.className='verdict-chip'; chip.textContent='同等です'; }
+  else if(split){ chip.className='verdict-chip split'; chip.textContent='指標で結論が割れています — 優先順を決めて'; }
+  else { chip.className='verdict-chip win'; chip.textContent='採用: '+(rateWin||yearWin); }
+
+  // option card status: rate primary; if split, mark the rate-winner pick & other "depends"
+  function setStatus(p, otherRateWin){
+    const st=$('st'+p), card=$('opt'+p);
+    const isRateWin = rateWin===p;
+    const isYearWin = yearWin===p;
+    card.classList.remove('winA','winB','lose');
+    if(split){
+      if(isRateWin){ st.className='opt-status pick'; st.textContent='時給で採用'; card.classList.add('win'+p); }
+      else if(isYearWin){ st.className='opt-status'; st.textContent='年間で採用'; }
+      else { st.className='opt-status pass'; st.textContent='見送り'; card.classList.add('lose'); }
+    }else{
+      const win = rateWin||yearWin;
+      if(win===p){ st.className='opt-status pick'; st.textContent='採用'; card.classList.add('win'+p); }
+      else if(win){ st.className='opt-status pass'; st.textContent='今回は見送り'; card.classList.add('lose'); }
+      else { st.className='opt-status'; st.textContent='同等'; }
+    }
+  }
+  setStatus('A'); setStatus('B');
+}
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+calc();
+</script>
+</body>
+</html>
