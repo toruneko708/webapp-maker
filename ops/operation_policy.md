@@ -76,3 +76,12 @@
 
 ## 9. 今週のアクション
 - `week_plan.json` 参照。
+
+## 10. Git公開ポリシー（恒久ルール / 2026-07-30 ユーザー承認）
+- 作成物は **GitHubで公開管理を基本**とする。問題ないもの（秘密情報を含まない）は public で push する。Git実績にもなる。
+- 今後のWEBアプリ標準装備に「Git公開」を追加（オーダー通知 / SNS告知ドラフト / worksカード / **Git公開** の4点体制）。
+- 正本は `C:\Users\mail\Documents\GitHub\webapp-maker`（モノレポ）。スレッド作業フォルダは一時置き場。
+- **秘密情報を含むファイルは public リポに入れない**。WEBHOOK URL 等は `.gitignore` か別管理。現状 `ops/` にWEBHOOK URLは含まない（rg で確認済み）。
+- 署名: `monadtest765-code <monadtest765@gmail.com>`（習慣）。
+- push先: テーマ / ghログイン状態に応じて `toruneko708` または `monadtest765-code`。moneyplan の前例どおり、署名とpush先アカウントが異なってよい。
+- 構成: 関連アプリはモノレポに集約。デプロイはディレクトリ指定（Cloudflare Pages）。
