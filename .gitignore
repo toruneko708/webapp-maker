@@ -1,0 +1,13 @@
+# wrangler / build cache
+.wrangler/
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs / env
+*.log
+.env
+.env.*
