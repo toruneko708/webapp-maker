@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DealShield — 契約する前に、その取引条件は法的に守られているか</title>
+<meta name="description" content="フリーランス・事業者間取引適正化等法（フリーランス新法）に基づき、発注時に提示された取引条件が明示義務・支払期日・無償修正禁止の観点で守られているかを、出典条文付きでチェック。不当な要求への断り文も根拠付きで生成。">
+<link rel="canonical" href="https://dealshield-5lo.pages.dev/">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DealShield">
+<meta property="og:title" content="DealShield — 契約する前に、取引条件は守られているか">
+<meta property="og:description" content="フリーランス新法の明示義務・支払期日・無償修正禁止を、出典条文付きでチェック。断り文も根拠付きで生成。">
+<meta property="og:url" content="https://dealshield-5lo.pages.dev/">
+<meta property="og:image" content="https://dealshield-5lo.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://dealshield-5lo.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"DealShield","url":"https://dealshield-5lo.pages.dev/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","description":"フリーランス新法に基づき取引条件の適正性をチェックし、断り文を根拠付きで生成するツール。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"フリーランス新法で発注者に義務づけられる明示事項はいくつ？","acceptedAnswer":{"@type":"Answer","text":"8項目です。双方の名称、業務委託日、給付内容、受領期日、受領場所、検査をする場合の検査完了期日、報酬額と支払期日、現金以外で支払う場合の支払方法。うち検査期日と支払方法は該当する場合のみ明示義務が生じます。"}},
+{"@type":"Question","name":"報酬の支払期日は何日以内？","acceptedAnswer":{"@type":"Answer","text":"給付を受領した日から60日以内、かつできる限り短い期間で定める必要があります。60日を超える定めは無効とみなされます。"}},
+{"@type":"Question","name":"無償の作り直しはすべて違法ですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。1ヶ月以上の委託で、かつフリーランスの責めに帰すべき事由がないのに変更・やり直しをさせて利益を不当に害することが禁止されています。フリーランス側の仕様不適合など責任がある修正は、無償で応じるのが原則です。"}},
+{"@type":"Question","name":"このツールの判定は法的助言ですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。各チェックは公的ソース（公正取引委員会・e-Gov法令検索）へのリンクを添えた確認の補助であり、断り文は文面の下書きです。個別の法的判断は弁護士や労働局の相談窓口にご相談ください。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;--shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;--ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;--amber:#e0a23a;--amber-soft:#fdf6e8;--mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}.brand-mark em{font-style:normal;color:var(--shu)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}.nav-links a:hover{color:var(--shu)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-shu{background:var(--shu);color:#fff;box-shadow:0 2px 0 var(--shu-dark)}.btn-shu:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(214,59,47,.32),0 2px 0 var(--shu-dark)}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.btn-paper{background:var(--paper);color:var(--shu);box-shadow:0 2px 0 rgba(0,0,0,.2)}.btn-paper:hover{transform:translateY(-2px)}
+.hero{padding:68px 0 34px}.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(36px,5.2vw,60px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--shu);position:relative;white-space:nowrap}h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(214,59,47,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:42ch;margin-bottom:24px}
+.hero-proof{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}.hero-proof span{display:inline-flex;align-items:center;gap:6px}.hero-proof b{color:var(--shu);font-weight:700}
+/* shield gauge */
+.shield-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12);text-align:center}
+.shield-stage{position:relative;width:150px;height:170px;margin:0 auto 14px}
+.shield-svg{width:100%;height:100%}
+.shield-body{fill:var(--paper-2);stroke:var(--sumi);stroke-width:3;transition:fill .5s}
+.shield-fill{transition:transform .6s cubic-bezier(.2,.8,.2,1);transform-origin:center bottom}
+.shield-crack{stroke:var(--shu);stroke-width:3;fill:none;stroke-linecap:round;opacity:0;transition:opacity .4s}
+.shield-crack.show{opacity:1}
+.shield-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.shield-num{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1;transition:color .4s}
+.shield-of{font-size:11px;color:var(--sumi-soft);margin-top:2px}
+.shield-verdict{font-family:var(--mincho);font-weight:700;font-size:17px;margin-top:4px;transition:color .4s;min-height:24px}
+.shield-verdict.ok{color:var(--ok)}.shield-verdict.warn{color:var(--amber)}.shield-verdict.bad{color:var(--shu)}
+.shield-note{font-size:11.5px;color:var(--sumi-soft);margin-top:8px}
+.sec{padding:8px 0 60px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.sec-no{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--sumi);width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-family:var(--mincho);font-weight:700;font-size:22px}
+.sec-sub{font-size:13.5px;color:var(--sumi-soft);margin:0 0 22px 38px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05);margin-bottom:18px;overflow:hidden}
+.card-head{padding:14px 22px;border-bottom:1px solid var(--paper-2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card-title{font-family:var(--mincho);font-weight:700;font-size:16px;display:flex;align-items:center;gap:9px}.card-title::before{content:"";width:4px;height:16px;background:var(--shu);border-radius:1px}
+.src{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--ai);text-decoration:none;border:1px solid var(--ai-soft);background:var(--ai-soft);padding:4px 10px;border-radius:3px;transition:all .18s}
+.src:hover{background:var(--ai);color:#fff}
+.card-body{padding:8px 22px 18px}
+/* check item */
+.chk-item{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--paper-2)}
+.chk-item:last-child{border-bottom:none}
+.chk-item .ci-mark{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:var(--ledger);transition:background .25s}
+.chk-item.met .ci-mark{background:var(--ok)}.chk-item.unmet .ci-mark{background:var(--shu)}.chk-item.na .ci-mark{background:var(--sumi-soft)}
+.chk-item .ci-body .ci-t{font-size:14px;font-weight:600}
+.chk-item .ci-body .ci-d{font-size:12px;color:var(--sumi-soft);margin-top:2px}
+.chk-item .ci-body .ci-law{font-size:11px;color:var(--ai);margin-top:3px}
+.chk-item .ci-body .ci-law a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.toggle{display:flex;align-items:center;gap:10px}
+.toggle .tl{font-size:11.5px;font-weight:700;color:var(--sumi-soft);white-space:nowrap}
+.switch{position:relative;width:44px;height:25px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:var(--ledger);border-radius:99px;cursor:pointer;transition:.25s}
+.slider-sw::before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider-sw{background:var(--ok)}
+.switch input:checked+.slider-sw::before{transform:translateX(19px)}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff;max-width:150px}
+.num .suf{padding:0 10px;color:var(--sumi-soft);font-size:12px;background:var(--paper);align-self:stretch;display:flex;align-items:center;border-left:1px solid var(--ledger)}
+.num input{border:none;outline:none;padding:8px 10px;font-size:14px;font-family:var(--mono);font-weight:500;width:80px;color:var(--sumi);background:transparent}
+.payrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--paper-2)}
+.payrow .pr-t{font-size:14px;font-weight:600;flex:1;min-width:160px}
+.pay-verdict{font-size:12px;font-weight:700;padding:4px 10px;border-radius:3px}
+.pay-verdict.ok{background:var(--ok-soft);color:var(--ok)}.pay-verdict.warn{background:var(--amber-soft);color:#9a6b12}.pay-verdict.bad{background:#fdecea;color:var(--shu)}
+.field-line{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--paper-2)}
+.field-line:last-child{border-bottom:none}
+.field-line .fl-t{font-size:14px;font-weight:600;flex:1;min-width:180px}
+.field-line .fl-d{font-size:11.5px;color:var(--sumi-soft)}
+.txt{border:1px solid var(--ledger);border-radius:4px;padding:8px 10px;font-size:13.5px;font-family:var(--gothic);width:100%;max-width:340px;color:var(--sumi);background:#fff}
+.txt:focus{outline:none;border-color:var(--ai);box-shadow:0 0 0 3px var(--ai-soft)}
+/* situation picker */
+.situ{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+@media(max-width:620px){.situ{grid-template-columns:1fr}}
+.situ .s{border:2px solid var(--line);border-radius:6px;padding:13px 14px;cursor:pointer;transition:all .2s;background:var(--paper);text-align:left}
+.situ .s:hover{border-color:var(--ai)}
+.situ .s.on{border-color:var(--shu);background:#fdecea}
+.situ .s .s-t{font-size:13.5px;font-weight:700}
+.situ .s .s-d{font-size:11.5px;color:var(--sumi-soft);margin-top:3px}
+/* generated letter */
+.letter{margin-top:18px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.letter-head{background:var(--paper-2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.letter-head .lh{font-family:var(--mincho);font-weight:700;font-size:14px}
+.letter-body{padding:22px 24px;font-size:14px;line-height:1.9;white-space:pre-wrap;background:#fff}
+.letter-law{padding:14px 24px;background:var(--ai-soft);border-top:1px solid var(--line);font-size:12px;color:var(--ai)}
+.letter-law a{color:var(--ai);font-weight:700}
+.copy-btn{font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--sumi);cursor:pointer;transition:all .18s}
+.copy-btn:hover{border-color:var(--shu);color:var(--shu)}
+.copy-btn.done{background:var(--ok);color:#fff;border-color:var(--ok)}
+.disclaimer{margin:24px 0 0;font-size:12px;color:var(--sumi-soft);background:var(--paper-2);border-left:3px solid var(--amber);padding:14px 18px;border-radius:0 6px 6px 0}
+.disclaimer b{color:var(--sumi)}
+.disclaimer a{color:var(--ai)}
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"盾";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no2{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#ff9d94}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+.support-band{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0}
+.support-inner{max-width:1120px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.support-text{font-size:13px;color:var(--sumi-soft);max-width:50ch}.support-text b{color:var(--sumi);font-weight:700}
+.support-actions{display:flex;gap:10px;flex-wrap:wrap}
+.support-actions a{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--sumi);transition:all .18s}
+.support-actions a:hover{border-color:var(--shu);color:var(--shu);transform:translateY(-2px)}
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}footer a:hover{color:var(--shu)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div><div class="margin-line"></div>
+<nav><div class="nav-inner">
+  <a class="brand" href="#"><span class="brand-mark">Deal<em>Shield</em></span><span class="brand-sub">取引の盾</span></a>
+  <div class="nav-links"><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a><a class="btn btn-shu" href="#check">チェックする →</a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="kicker">防ぐ道具</span>
+    <h1>サインする前に、<br><span class="accent">盾</span>を<br>立てたか。</h1>
+    <p class="hero-lead">フリーランス新法（フリーランス・事業者間取引適正化等法）は、あなたを守る盾になりうる。ただし盾は、どこが守られているかを知って初めて効く。発注条件を8項目＋支払期日＋修正リスクで点検し、不当な要求には根拠付きで返す。</p>
+    <div class="hero-proof"><span><b>✓</b> 登録不要・無料</span><span><b>✓</b> 全チェックに出典条文</span><span><b>✓</b> 計算はブラウザ内</span></div>
+  </div>
+  <div class="shield-card">
+    <div class="shield-stage">
+      <svg class="shield-svg" viewBox="0 0 120 136">
+        <defs><clipPath id="shieldClip"><path d="M60 4 L112 22 L112 64 C112 98 88 120 60 132 C32 120 8 98 8 64 L8 22 Z"/></clipPath></defs>
+        <path class="shield-body" d="M60 4 L112 22 L112 64 C112 98 88 120 60 132 C32 120 8 98 8 64 L8 22 Z"/>
+        <g clip-path="url(#shieldClip)"><rect class="shield-fill" id="shieldFill" x="0" y="132" width="120" height="132" fill="var(--ok)"/></g>
+        <path class="shield-crack" id="crack1" d="M60 18 L52 52 L66 70 L54 104"/>
+        <path class="shield-crack" id="crack2" d="M66 70 L86 78"/>
+      </svg>
+      <div class="shield-center"><div class="shield-num" id="shieldNum">0</div><div class="shield-of">/ 10 確認</div></div>
+    </div>
+    <div class="shield-verdict warn" id="shieldVerdict">条件を入力してください</div>
+    <div class="shield-note">各項目の ✓/✕ は公的条文へのリンク付き</div>
+  </div>
+</div></header>
+
+<section class="sec" id="check"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">1</span><span class="sec-title">取引条件チェッカー</span></div>
+  <p class="sec-sub">発注時に提示された条件を、左のトグルで「提示された / されていない」にしてください。該当する項目だけ ON にする条件付き項目もあります。</p>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">明示義務 8項目</span><a class="src" href="https://www.jftc.go.jp/freelancelaw_2025/index.html" target="_blank" rel="noopener">出典: JFTC 明示義務 ↗</a></div>
+    <div class="card-body" id="discloseList"></div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">支払期日</span><a class="src" href="https://laws.e-gov.go.jp/law/505AC0000000025" target="_blank" rel="noopener">出典: e-Gov 4条 ↗</a></div>
+    <div class="card-body">
+      <div class="payrow">
+        <span class="pr-t">報酬の支払期日（受領からの日数）</span>
+        <div class="num"><input type="number" id="payDays" value="45" min="0" max="365"><span class="suf">日</span></div>
+        <span class="pay-verdict warn" id="payVerdict">—</span>
+      </div>
+      <div class="field-line">
+        <span class="fl-t">この委託は 1ヶ月以上 続く見込み</span>
+        <label class="switch"><input type="checkbox" id="over1m" checked><span class="slider-sw"></span></label>
+      </div>
+      <div style="font-size:12px;color:var(--sumi-soft);padding:4px 0 0">支払期日は受領日から60日以内、かつできる限り短く。60日超の定めは無効とみなされます。「1ヶ月以上」は、無償修正禁止（5条）が適用されるかの分岐に使われます。</div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">無償修正・やり直しのリスク</span><a class="src" href="https://www.jftc.go.jp/fllaw.html" target="_blank" rel="noopener">出典: JFTC 5条 ↗</a></div>
+    <div class="card-body">
+      <div class="field-line">
+        <span class="fl-t">契約書に「修正回数の上限」が明記されている</span>
+        <label class="switch"><input type="checkbox" id="revLimit"><span class="slider-sw"></span></label>
+      </div>
+      <div class="field-line">
+        <span class="fl-t">「範囲外の追加作業は別途見積り」の取り決めがある</span>
+        <label class="switch"><input type="checkbox" id="extraPay"><span class="slider-sw"></span></label>
+      </div>
+      <div style="font-size:12px;color:var(--sumi-soft);padding:4px 0 0">1ヶ月以上の委託では、あなたの責任でない変更・やり直しを無償で強制することが禁じられます。ただし仕様不適合などあなた側の責任なら、無償修正が原則です。この分岐は下の断り文にも反映されます。</div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="reply"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">2</span><span class="sec-title">断り文ジェネレーター</span></div>
+  <p class="sec-sub">状況を選ぶと、上のチェック結果（1ヶ月以上か・契約条項の有無）を引き継いで、根拠条文付きの文面を下書きします。あなたの責任がある修正には「断り」ではなく「誠実な対応文」を出します。</p>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">状況を選択</span></div>
+    <div class="card-body">
+      <div class="situ" id="situList">
+        <div class="s on" data-s="redo"><div class="s-t">無償の作り直し・修正を求められた</div><div class="s-d">納品後に「やっぱり変えて」と無償で</div></div>
+        <div class="s" data-s="scope"><div class="s-t">範囲外の追加作業を無償で頼まれた</div><div class="s-d">当初の合意に無い作業を「ついでに」</div></div>
+        <div class="s" data-s="cut"><div class="s-t">報酬の値下げを要求された</div><div class="s-d">合意済みの金額を一方的に減額</div></div>
+        <div class="s" data-s="cancel"><div class="s-t">一方的なキャンセル・不払い</div><div class="s-d">着手後に委託を取り消された</div></div>
+      </div>
+      <div class="field-line"><span class="fl-t">業務内容の概要（文面に挿入）</span><input class="txt" id="inScope" placeholder="例: コーポレートサイト制作（5ページ）"></div>
+      <div class="field-line"><span class="fl-t">合意済みの報酬額</span><div class="num"><input type="number" id="inFee" value="300000" step="10000"><span class="suf">円</span></div></div>
+      <div class="field-line">
+        <span class="fl-t">この要求は、あなた（受託側）の責めに帰すべき事由による<br><span class="fl-d">仕様不適合・契約内容と異なる成果物など。ある場合は無償対応が原則です</span></span>
+        <label class="switch"><input type="checkbox" id="inFault"><span class="slider-sw"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="letter reveal" id="letterBox">
+    <div class="letter-head"><span class="lh">生成された文面（下書き）</span><button class="copy-btn" id="copyBtn">文面をコピー</button></div>
+    <div class="letter-body" id="letterBody"></div>
+    <div class="letter-law" id="letterLaw"></div>
+  </div>
+
+  <div class="disclaimer">
+    <b>このツールは法的助言ではありません。</b> 各チェックは公正取引委員会・e-Gov法令検索へのリンクを添えた確認の補助であり、生成文面はあくまで下書きです。個別の事情による判断は、弁護士または「フリーランス・トラブル110番」など公的相談窓口にご相談ください。条文・ガイドラインは改正されうるため、最新の出典を必ずご確認ください。
+  </div>
+</div></section>
+
+<section class="memo-sec"><div class="wrap"><div class="memo reveal">
+  <span class="sec-no2">JUDGMENT — 判断の順番</span>
+  <h2>感情で返す前に、<span class="accent">条文</span>で返す。</h2>
+  <p>「無償で直して」と言われた瞬間、感情が先に動く。断れば関係が悪化しそう、受ければ自分が削れる。この二択に追い込まれるのが、フリーランスの慢性痛だ。でも順番を一つ変えられる——感情で返す前に、その要求が法のどこに触れるかを確認する。盾は「何でも断る」ためじゃない。あなたの責任なら誠実に、相手の都合なら根拠を持って。境界を条文で引く道具です。</p>
+  <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+</div></div></section>
+
+<div class="support-band"><div class="support-inner">
+  <div class="support-text"><b>このツール、役に立ちましたか？</b> 無料でお届けしています。もし一言もらえたら、次の判断の材料になります。</div>
+  <div class="support-actions"><a id="sbX" href="#" target="_blank" rel="noopener">X で一言</a><a id="sbB" href="#" target="_blank" rel="noopener">はてブで保存</a></div>
+</div></div>
+<script>(function(){var u=location.href.split('#')[0];var e=encodeURIComponent(u);var t=encodeURIComponent('フリーランスのお金の判断を、自分で下すための道具と解説。判断の順番でつくられています。');var x=document.getElementById('sbX');if(x)x.href='https://twitter.com/intent/tweet?text='+t+'&url='+e;var b=document.getElementById('sbB');if(b)b.href='https://b.hatena.ne.jp/entry/'+u;})();</script>
+
+<footer><div class="wrap foot-inner">
+  <div><div class="foot-brand">Deal<em>Shield</em></div><div style="margin-top:4px">取引防衛チェッカー</div></div>
+  <div class="foot-tools"><a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a><a href="https://cashpulse-8h9.pages.dev/">CashPulse</a><a href="https://taxvault.pages.dev/">TaxVault</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a></div>
+  <div>© 2026</div>
+</div></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const SRC_DISCLOSE='https://www.jftc.go.jp/freelancelaw_2025/index.html';
+const SRC_PAY='https://laws.e-gov.go.jp/law/505AC0000000025';
+const SRC_ART5='https://www.jftc.go.jp/fllaw.html';
+const SRC_USE='https://www.jftc.go.jp/toriteki/legislation/unyou.html';
+
+// 8 disclosure items: id, title, desc, conditional(bool)
+const DISC=[
+  ['d1','双方の名称','発注事業者とフリーランスの氏名/名称',false],
+  ['d2','業務委託をした日','契約/発注が成立した日付',false],
+  ['d3','給付の内容','納品物・役務の範囲',false],
+  ['d4','受領期日','成果物を受け取る期日',false],
+  ['d5','受領場所','成果物を受け取る場所',false],
+  ['d6','検査完了期日','検査をする場合にのみ明示義務',true],
+  ['d7','報酬額と支払期日','金額と支払日の両方',false],
+  ['d8','支払方法','現金以外で支払う場合にのみ明示義務',true]
+];
+let discState={};
+DISC.forEach(d=>discState[d[0]]= d[3] ? 'na' : 'unmet');
+
+function renderDisclose(){
+  $('discloseList').innerHTML=DISC.map(d=>{
+    const cond=d[3];
+    const st=discState[d[0]];
+    const mark=st==='met'?'✓':st==='na'?'–':'✕';
+    return `<div class="chk-item ${st}" id="ci-${d[0]}">
+      <div class="ci-mark">${mark}</div>
+      <div class="ci-body"><div class="ci-t">${d[1]}</div><div class="ci-d">${d[2]}</div>
+      ${cond?'<div class="ci-d">該当する場合のみ義務</div>':''}
+      <div class="ci-law">根拠: <a href="${SRC_DISCLOSE}" target="_blank" rel="noopener">明示義務事項（JFTC）↗</a></div></div>
+      <div class="toggle">
+        ${cond?`<span class="tl">該当</span><label class="switch"><input type="checkbox" data-cond="${d[0]}" ${st!=='na'?'checked':''}><span class="slider-sw"></span></label>`:''}
+        <span class="tl">提示あり</span><label class="switch"><input type="checkbox" data-met="${d[0]}" ${st==='met'?'checked':''} ${st==='na'?'disabled':''}><span class="slider-sw"></span></label>
+      </div></div>`;
+  }).join('');
+  document.querySelectorAll('[data-met]').forEach(cb=>cb.addEventListener('change',()=>{
+    const id=cb.dataset.met; discState[id]=cb.checked?'met':'unmet'; renderDisclose(); calc();
+  }));
+  document.querySelectorAll('[data-cond]').forEach(cb=>cb.addEventListener('change',()=>{
+    const id=cb.dataset.cond; discState[id]=cb.checked?'unmet':'na'; renderDisclose(); calc();
+  }));
+}
+
+let situ='redo';
+document.querySelectorAll('#situList .s').forEach(el=>el.addEventListener('click',()=>{
+  document.querySelectorAll('#situList .s').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on'); situ=el.dataset.s; genLetter();
+}));
+['payDays','over1m','revLimit','extraPay','inScope','inFee','inFault'].forEach(id=>$(id).addEventListener('input',()=>{calc();genLetter();}));
+
+function payStatus(){
+  const d=parseFloat($('payDays').value);
+  if(isNaN(d)||d<0) return {k:null};
+  if(d<=30) return {k:'ok',t:'30日以内・適切'};
+  if(d<=60) return {k:'warn',t:'60日以内だが短縮を'};
+  return {k:'bad',t:'60日超・無効とみなす'};
+}
+
+function calc(){
+  // count met among applicable (not na)
+  let applicable=0, met=0;
+  DISC.forEach(d=>{ const s=discState[d[0]]; if(s!=='na'){applicable++; if(s==='met')met++;} });
+  // pay item
+  const ps=payStatus(); let payOk=false;
+  if(ps.k==='ok'){payOk=true;}
+  // revise risk: positive if both protections on (only meaningful when over1m)
+  const over1m=$('over1m').checked;
+  const revOk = $('revLimit').checked && $('extraPay').checked;
+  // total score out of 10: 8 disclose(applicable normalized) + pay + revise
+  // normalize disclose to 8 slots: met count among applicable, but na slots count as satisfied
+  const discScore = met + (8-applicable); // na treated as satisfied
+  const payScore = (ps.k==='ok'||ps.k==='warn')?1:0; // warn counts partial as 1 for shield but flagged
+  const revScore = (!over1m || revOk)?1:0;
+  const total = discScore + payScore + revScore; // max 10
+  // violations
+  const violations=[];
+  if(met<applicable) violations.push('明示義務の未提示');
+  if(ps.k==='bad') violations.push('支払期日60日超');
+  if(over1m && !revOk) violations.push('修正/追加の取り決め不足');
+
+  // shield fill
+  const pct=total/10;
+  $('shieldFill').setAttribute('y',(132-132*pct).toFixed(1));
+  $('shieldFill').setAttribute('height',(132*pct).toFixed(1));
+  $('shieldNum').textContent=total;
+  const hasCrack = violations.length>0;
+  $('crack1').classList.toggle('show',hasCrack);
+  $('crack2').classList.toggle('show',violations.length>=2);
+  const fill=$('shieldFill');
+  const v=$('shieldVerdict');
+  if(violations.length===0){ fill.setAttribute('fill','var(--ok)'); v.className='shield-verdict ok'; v.textContent='盾は立っています'; $('shieldNum').style.color='var(--ok)'; }
+  else if(violations.length===1){ fill.setAttribute('fill','var(--amber)'); v.className='shield-verdict warn'; v.textContent='1箇所に隙間あり'; $('shieldNum').style.color='var(--amber)'; }
+  else { fill.setAttribute('fill','var(--shu)'); v.className='shield-verdict bad'; v.textContent=violations.length+'箇所に隙間'; $('shieldNum').style.color='var(--shu)'; }
+
+  // pay verdict
+  const pv=$('payVerdict');
+  if(ps.k==='ok'){pv.className='pay-verdict ok';pv.textContent=ps.t;}
+  else if(ps.k==='warn'){pv.className='pay-verdict warn';pv.textContent=ps.t;}
+  else if(ps.k==='bad'){pv.className='pay-verdict bad';pv.textContent=ps.t;}
+  else {pv.className='pay-verdict warn';pv.textContent='日数を入力';}
+
+  return {violations,over1m,revOk,met,applicable};
+}
+
+function fee(){ const n=parseFloat($('inFee').value)||0; return '¥'+n.toLocaleString('ja-JP'); }
+function scope(){ return $('inScope').value.trim()||'（業務内容）'; }
+
+function genLetter(){
+  const st=calc();
+  const fault=$('inFault').checked;
+  const over1m=st.over1m;
+  const s=scope(), f=fee();
+  let body='', law='';
+  const head='お世話になっております。\n';
+  if(situ==='redo'){
+    if(fault){
+      body=head+`ご依頼いただきました「${s}」の納品物につきまして、ご指摘の箇所は当方の確認が不足しており、誠に申し訳ございません。\n契約内容と異なる点につきましては、無償にて修正対応いたします。修正完了の目処は○月○日です。\n今後も品質管理に努めてまいりますので、引き続きよろしくお願いいたします。`;
+      law=`このケースでは、成果物が契約内容に適合していない可能性があり、受託側の責めに帰すべき事由にあたります。無償修正に応じるのが原則です（<a href="${SRC_USE}" target="_blank" rel="noopener">JFTC 運用基準 ↗</a>）。`;
+    }else{
+      body=head+`「${s}」につきまして、いただいた修正ご依頼を確認いたしました。\n本件は当初合意いたしました仕様・範囲に含まれない変更と認識しております。${over1m?'フリーランス・事業者間取引適正化等法5条2項2号は、受託者の責めに帰すべき事由がない変更・やり直しにより利益を不当に害することを禁じております。':''}つきましては、変更内容に対応する追加報酬と納期の調整をご用命いただきたく存じます。\n変更箇所と追加お見積りを別途お送りいたしますので、ご確認のうえご指示いただけますでしょうか。`;
+      law=`根拠: <a href="${SRC_ART5}" target="_blank" rel="noopener">フリーランス法 5条2項2号（無償変更・やり直しの禁止）↗</a>${over1m?' ／ 適用要件: 1ヶ月以上の委託（<a href="https://www.jftc.go.jp/fllawenforcementorder.html" target="_blank" rel="noopener">施行令 ↗</a>）':''} ／ 解釈: <a href="${SRC_USE}" target="_blank" rel="noopener">運用基準 ↗</a>`;
+    }
+  }else if(situ==='scope'){
+    body=head+`「${s}」に関連してご依頼のあった追加作業につきまして、確認いたしました。\n本作業は当初合意いたしました業務範囲（${s}）に含まれないものと認識しております。${over1m?'範囲外の作業を無償で求めることは、フリーランス・事業者間取引適正化等法5条2項2号の観点からも適切ではありません。':''}つきましては、追加のご発注として別途お見積りのうえ対応いたしますので、ご依頼いただけますでしょうか。\nお見積りは○営業日以内にお送りいたします。`;
+    law=`根拠: <a href="${SRC_ART5}" target="_blank" rel="noopener">フリーランス法 5条2項2号 ↗</a>${over1m?'（1ヶ月以上の委託で適用）':''} ／ 範囲の明示: <a href="${SRC_DISCLOSE}" target="_blank" rel="noopener">明示義務（給付の内容）↗</a>`;
+  }else if(situ==='cut'){
+    body=head+`「${s}」の報酬につきまして、ご提示のあった減額について確認いたしました。\n既に合意いたしました報酬額 ${f} につきまして、当方の責めに帰すべき事由がないまま減額いただくことは、フリーランス・事業者間取引適正化等法（報酬の買いたたき等の禁止）の観点からも困難です。\nご予算のご事情がございましたら、業務範囲や納期の調整によるご相談は可能です。あらためてお打ち合わせさせていただけますでしょうか。`;
+    law=`根拠: <a href="${SRC_ART5}" target="_blank" rel="noopener">フリーランス法 5条（買いたたき等の禁止）↗</a> ／ 報酬の明示: <a href="${SRC_DISCLOSE}" target="_blank" rel="noopener">明示義務 ↗</a>`;
+  }else{ // cancel
+    body=head+`「${s}」の委託につきまして、一方的な取り消しのご連絡を拝見いたしました。\n当方は既に本件に着手しており、委託契約に基づく報酬 ${f} のお支払いをお願いいたします。着手後の一方的な不払い・減額は、フリーランス・事業者間取引適正化等法4条・5条の観点からも認められません。\nやむを得ず委託を終了される場合でも、着手分の精算につきましてご協議いただきたく存じます。`;
+    law=`根拠: <a href="${SRC_PAY}" target="_blank" rel="noopener">フリーランス法 4条（支払期日・報酬支払義務）↗</a> ／ <a href="${SRC_ART5}" target="_blank" rel="noopener">5条（不利益取扱い等の禁止）↗</a>`;
+  }
+  $('letterBody').textContent=body;
+  $('letterLaw').innerHTML=law;
+  $('copyBtn').classList.remove('done'); $('copyBtn').textContent='文面をコピー';
+}
+
+$('copyBtn').addEventListener('click',()=>{
+  const txt=$('letterBody').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{ $('copyBtn').classList.add('done'); $('copyBtn').textContent='コピーしました ✓'; setTimeout(()=>{$('copyBtn').classList.remove('done');$('copyBtn').textContent='文面をコピー';},2000); }).catch(()=>{});
+});
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+renderDisclose(); calc(); genLetter();
+</script>
+</body></html>
