@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>免税事業者からの請求書、仕入税額控除はどうなる？ 経過措置チェッカー — InvoiceFlow Guide</title>
+<meta name="description" content="インボイス登録していない免税事業者から受け取った請求書。仕入税額控除は経過措置で段階的に縮小されます。取引日を入れると控除できる割合と額をその場で計算。">
+<link rel="canonical" href="https://invoiceflow-8qd.pages.dev/guide/exempt">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="InvoiceFlow">
+<meta property="og:title" content="免税事業者からの請求書、仕入税額控除はどうなる？">
+<meta property="og:description" content="経過措置で段階的に縮小する仕入税額控除。取引日を入れると控除できる割合と額を計算。">
+<meta property="og:url" content="https://invoiceflow-8qd.pages.dev/guide/exempt">
+<meta property="og:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-exempt.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-exempt.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"免税事業者からの請求書、仕入税額控除はどうなる？","author":{"@type":"Person","name":"WEBアプリを作る人"},"publisher":{"@type":"Organization","name":"InvoiceFlow"},"datePublished":"2026-07-30","description":"免税事業者からの仕入に係る仕入税額控除の経過措置を、取引日ベースのチェッカーで解説。"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"免税事業者からの仕入は控除できますか？","acceptedAnswer":{"@type":"Answer","text":"原則はできませんが、経過措置により一定期間は仕入税額相当額の一部を控除できます。2026年9月までは80%、2029年9月までは50%、それ以降は控除不可です。"}},
+{"@type":"Question","name":"経過措置を受ける条件は？","acceptedAnswer":{"@type":"Answer","text":"免税事業者等からの課税仕入であること、および帳簿と請求書等に必要な事項（経過措置適用の旨など）を記載していることが条件です。"}},
+{"@type":"Question","name":"2割特例と同じものですか？","acceptedAnswer":{"@type":"Answer","text":"違います。2割特例は免税事業者が課税事業者になった際の納税額計算の特例で、受け取る側の仕入税額控除の経過措置とは別の制度です。"}},
+{"@type":"Question","name":"取引先が免税事業者のままでも取引していい？","acceptedAnswer":{"@type":"Answer","text":"取引自体は可能です。ただし経過措置が終わるほど控除できない税額が増え、実質コストになります。価格交渉や登録の検討材料として数字で把握しておくことが重要です。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;
+  --shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;
+  --ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;
+  --mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.45;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
+  repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.25);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:860px;margin:0 auto;padding:0 32px}
+
+nav{background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-inner{max-width:860px;margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--mincho);font-weight:800;font-size:18px;text-decoration:none;color:var(--sumi)}
+.brand em{font-style:normal;color:var(--shu)}
+.nav-x{font-size:12px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}
+.nav-x:hover{color:var(--shu)}
+
+header.hero{padding:64px 0 32px}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(30px,4.2vw,46px);line-height:1.35;margin:14px 0 18px;letter-spacing:.01em}
+h1 .accent{color:var(--shu)}
+.lead{color:var(--sumi-soft);font-size:15px;max-width:56ch}
+
+.article-body{font-size:15.5px}
+.article-body h2{font-family:var(--mincho);font-weight:700;font-size:24px;margin:42px 0 16px}
+.article-body h3{font-family:var(--mincho);font-weight:700;font-size:19px;margin:28px 0 12px}
+.article-body p{margin-bottom:18px}
+.article-body ul{margin:16px 0 20px;padding-left:22px}
+.article-body li{margin-bottom:6px}
+.article-body .note{font-size:13.5px;color:var(--sumi-soft);background:var(--paper-2);padding:14px 18px;border-left:3px solid var(--shu);margin:20px 0}
+.article-body a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.article-body a:hover{border-bottom-color:var(--ai)}
+
+/* timeline */
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:24px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.tl{padding:18px 16px;text-align:center;border-right:1px solid var(--line);position:relative;transition:background .3s}
+.tl:last-child{border-right:none}
+.tl .pct{font-family:var(--mono);font-weight:600;font-size:30px;line-height:1}
+.tl .rng{font-size:11px;color:var(--sumi-soft);margin-top:6px;font-family:var(--mono)}
+.tl .lab{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--sumi-soft);margin-top:4px}
+.tl.t80 .pct{color:var(--ai)}.tl.t50 .pct{color:#5a7bb0}.tl.t0 .pct{color:var(--shu)}
+.tl.active{background:var(--paper-2)}
+.tl.active::after{content:"◀ 現在";position:absolute;top:6px;right:8px;font-size:9px;font-weight:800;color:var(--shu);letter-spacing:.08em}
+
+/* checker */
+.checker{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;margin:32px 0;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.checker .ctitle{font-family:var(--mincho);font-weight:700;font-size:18px;margin-bottom:6px}
+.checker .csub{font-size:13px;color:var(--sumi-soft);margin-bottom:20px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+@media(max-width:560px){.cgrid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--sumi-soft)}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff}
+.num .pre{padding:0 12px;color:var(--sumi-soft);font-size:14px;background:var(--paper);align-self:stretch;display:flex;align-items:center;border-right:1px solid var(--ledger)}
+.num input,.num-date{border:none;outline:none;padding:11px 12px;font-size:15px;font-family:var(--mono);font-weight:500;width:100%;color:var(--sumi);background:transparent}
+.hint{font-size:11px;color:var(--sumi-soft)}
+
+.result{margin-top:22px;border-radius:8px;padding:22px 24px;border:2px solid var(--line);background:var(--paper);transition:all .4s}
+.result.r80{border-color:var(--ai);background:var(--ai-soft)}
+.result.r50{border-color:#5a7bb0;background:#eef2f8}
+.result.r0{border-color:var(--shu);background:#fdecea}
+.result .rhead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.result .rperiod{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft)}
+.result .rpct{font-family:var(--mono);font-weight:600;font-size:34px;line-height:1}
+.result.r80 .rpct{color:var(--ai)}.result.r50 .rpct{color:#5a7bb0}.result.r0 .rpct{color:var(--shu)}
+.rrows{margin-top:14px;display:grid;gap:6px}
+.rrow{display:flex;justify-content:space-between;font-size:14px}
+.rrow .v{font-family:var(--mono);font-weight:600}
+.rrow.ok .v{color:var(--ok)}
+.rrow.bad .v{color:var(--shu)}
+.rrow.total{border-top:2px solid var(--sumi);margin-top:8px;padding-top:10px;font-weight:700}
+.stack{display:flex;height:12px;border-radius:3px;overflow:hidden;background:var(--paper-2);margin:14px 0 6px}
+.stack i{display:block;height:100%;transition:width .4s}
+.stack .ok{background:var(--ok)}.stack .bad{background:var(--shu)}
+.stack-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--sumi-soft)}
+
+.cluster{margin:48px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.cluster{grid-template-columns:1fr}}
+.cluster a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;text-decoration:none;color:var(--sumi);transition:transform .2s,box-shadow .2s,border-color .2s}
+.cluster a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,33,40,.1);border-color:var(--ledger)}
+.cluster .ct{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.cluster .ch{font-family:var(--mincho);font-weight:700;font-size:15px;margin-top:5px}
+.cluster .cd{font-size:12px;color:var(--sumi-soft);margin-top:4px}
+
+.cta-band{background:var(--shu);color:#fff;padding:48px 0;margin:48px 0 0}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cta-band h2{font-family:var(--mincho);font-weight:800;font-size:26px;line-height:1.35;color:#fff}
+.btn-paper{display:inline-flex;align-items:center;gap:7px;background:var(--paper);color:var(--shu);font-weight:700;font-size:14px;padding:12px 24px;border-radius:4px;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .18s}
+.btn-paper:hover{transform:translateY(-2px)}
+
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:36px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:16px;color:var(--paper)}
+.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none}
+footer a:hover{color:var(--shu)}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div>
+<div class="margin-line"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="https://invoiceflow-8qd.pages.dev/">Invoice<em>Flow</em></a>
+    <a class="nav-x" href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">GUIDE — 解説 04</span>
+    <h1>免税事業者からの<br>請求書、<span class="accent">控除</span>できる？</h1>
+    <p class="lead">インボイス登録していない免税事業者から受け取った請求書。仕入税額控除は原則できませんが、経過措置により一定期間は一部を控除できます。その割合は年を追うごとに縮小します。下のチェッカーに取引日を入れると、控除できる割合と額をその場で計算します。</p>
+  </div>
+</header>
+
+<main class="wrap article-body">
+  <h2>経過措置の3段階</h2>
+  <p>免税事業者等からの課税仕入について、仕入税額相当額の一部を控除できる経過措置が設けられています。期間は3段階で、徐々に縮小していきます。</p>
+
+  <div class="timeline" id="timeline">
+    <div class="tl t80" data-k="80"><div class="pct">80%</div><div class="rng">2023/10 – 2026/09</div><div class="lab">控除可能</div></div>
+    <div class="tl t50" data-k="50"><div class="pct">50%</div><div class="rng">2026/10 – 2029/09</div><div class="lab">控除可能</div></div>
+    <div class="tl t0" data-k="0"><div class="pct">0%</div><div class="rng">2029/10 –</div><div class="lab">控除不可</div></div>
+  </div>
+
+  <h2>取引日で控除額を計算</h2>
+  <p>取引日と、免税事業者への税込支払額を入れてください。10%対象品目を前提に、消費税相当額のうち控除できる額と、控除できず実質コストになる額を出します。</p>
+
+  <div class="checker">
+    <div class="ctitle">経過措置チェッカー</div>
+    <div class="csub">税込支払額と取引日を入力（10%対象品目の目安）</div>
+    <div class="cgrid">
+      <div class="field">
+        <label>免税事業者への税込支払額</label>
+        <div class="num"><span class="pre">¥</span><input type="number" id="pay" value="110000" step="1000"></div>
+        <div class="hint">消費税込みで支払った総額</div>
+      </div>
+      <div class="field">
+        <label>取引年月日</label>
+        <div class="num"><input class="num-date" type="date" id="date"></div>
+        <div class="hint">期間を自動判定します</div>
+      </div>
+    </div>
+
+    <div class="result r80" id="result">
+      <div class="rhead">
+        <span class="rperiod" id="rperiod">2023/10 – 2026/09 の取引</span>
+        <span class="rpct" id="rpct">80%</span>
+      </div>
+      <div class="rrows">
+        <div class="rrow"><span>消費税相当額（仕入税額相当）</span><span class="v" id="rTaxEquiv">¥10,000</span></div>
+        <div class="rrow ok"><span>控除できる額</span><span class="v" id="rDeduct">¥8,000</span></div>
+        <div class="rrow bad"><span>控除できずコストになる額</span><span class="v" id="rLost">¥2,000</span></div>
+      </div>
+      <div class="stack"><i class="ok" id="barOk" style="width:80%"></i><i class="bad" id="barBad" style="width:20%"></i></div>
+      <div class="stack-labels"><span>控除できる</span><span>実質コスト</span></div>
+    </div>
+  </div>
+
+  <div class="note">この計算は10%対象品目・税込支払額を前提とした目安です。経過措置を受けるには、帳簿と請求書等に「経過措置適用の旨」など所定の事項を記載する必要があります。記載が漏れると、たとえ期間内でも控除を受けられません。</div>
+
+  <h2>2割特例とは別物</h2>
+  <p>よく混同されますが、2割特例は「免税事業者が課税事業者になった際の納税額計算」の特例で、売上側の話です。ここで扱っている経過措置は「受け取る側の仕入税額控除」の話。立場が真逆なので、同じ文脈で語らない方が安全です。</p>
+
+  <h2>取引先が免税事業者のままなら</h2>
+  <p>取引自体は問題なくできます。ただし経過措置が終わるほど、控除できず実質コストになる税額が増えていきます。上のチェッカーで「控除できずコストになる額」を見れば、それが価格交渉や、取引先への登録検討のお願い材料として、感情論ではなく数字で提示できます。</p>
+
+  <h2>判断の順番</h2>
+  <p>「免税事業者だから全部ダメ」と思うのも、「まだ大丈夫」と楽観するのも、どちらも順番を間違えている。正しい順番は「取引日を特定する」→「期間の割合を確認する」→「帳簿記載要件を満たす」→「控除できない額をコストとして認識する」。感情ではなく日付と計算で判断する。これが経過措置を正しく扱う唯一の方法です。</p>
+
+  <div class="cluster">
+    <a href="mixed-tax.html"><div class="ct">GUIDE 01</div><div class="ch">8%と10%混在の消費税計算</div><div class="cd">動く計算機で税率区分を検証</div></a>
+    <a href="regno.html"><div class="ct">GUIDE 02</div><div class="ch">登録番号の書き方と検証</div><div class="cd">T+13桁をバリデータで確認</div></a>
+    <a href="reduced-rate.html"><div class="ct">GUIDE 03</div><div class="ch">軽減税率8%の対象品目</div><div class="cd">これは8%？10%？を判定</div></a>
+    <a href="https://tekicheck.pages.dev/"><div class="ct">TOOL</div><div class="ch">TekiCheck</div><div class="cd">受け取った請求書を8項目で診断</div></a>
+  </div>
+</main>
+
+<div class="cta-band">
+  <div class="wrap cta-inner">
+    <h2>控除の可否を、日付と数字で把握しておく。</h2>
+    <a class="btn-paper" href="https://tekicheck.pages.dev/">受け取った請求書をTekiCheckで診断 →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">Invoice<em>Flow</em></div>
+    <div>判断の順番で、Webアプリをつくる。</div>
+    <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+// default date = today
+$('date').value = new Date().toISOString().split('T')[0];
+['pay','date'].forEach(id=>$(id).addEventListener('input',calc));
+
+function periodOf(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr+'T00:00:00');
+  const y=d.getFullYear(), m=d.getMonth()+1;
+  const ym=y*100+m;
+  if(ym < 202310) return {k:null, label:'制度開始前（2023/10以前）', note:'インボイス制度開始前の取引です。経過措置の対象期間外。'};
+  if(ym <= 202609) return {k:80, label:'2023/10 – 2026/09 の取引'};
+  if(ym <= 202909) return {k:50, label:'2026/10 – 2029/09 の取引'};
+  return {k:0, label:'2029/10 以降の取引'};
+}
+
+function calc(){
+  const pay=parseFloat($('pay').value)||0;
+  const p=periodOf($('date').value);
+  const taxEquiv=Math.round(pay*10/110); // 10%対象前提の消費税相当
+  const res=$('result');
+
+  // timeline highlight
+  document.querySelectorAll('#timeline .tl').forEach(el=>{
+    el.classList.toggle('active', p && p.k!==null && el.dataset.k===String(p.k));
+  });
+
+  if(!p || p.k===null){
+    res.className='result';
+    $('rperiod').textContent=p?p.label:'取引日を入力してください';
+    $('rpct').textContent='—';
+    $('rTaxEquiv').textContent='¥'+taxEquiv.toLocaleString('ja-JP');
+    $('rDeduct').textContent='—';$('rLost').textContent='—';
+    $('barOk').style.width='0%';$('barBad').style.width='0%';
+    return;
+  }
+  const k=p.k;
+  const deduct=Math.round(taxEquiv*k/100);
+  const lost=taxEquiv-deduct;
+  res.className='result r'+k;
+  $('rperiod').textContent=p.label;
+  $('rpct').textContent=k+'%';
+  $('rTaxEquiv').textContent='¥'+taxEquiv.toLocaleString('ja-JP');
+  $('rDeduct').textContent='¥'+deduct.toLocaleString('ja-JP');
+  $('rLost').textContent='¥'+lost.toLocaleString('ja-JP');
+  $('barOk').style.width=k+'%';
+  $('barBad').style.width=(100-k)+'%';
+}
+calc();
+</script>
+</body>
+</html>
