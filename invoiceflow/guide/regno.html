@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>適格請求書の登録番号、どこにどう書く？ T+13桁の検証付き — InvoiceFlow Guide</title>
+<meta name="description" content="適格請求書発行事業者の登録番号（Tで始まる13桁）の正しい形式と、請求書のどこに書くかを解説。その場で形式を検証できるバリデータ付き。">
+<link rel="canonical" href="https://invoiceflow-8qd.pages.dev/guide/regno">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="InvoiceFlow">
+<meta property="og:title" content="適格請求書の登録番号、どこにどう書く？">
+<meta property="og:description" content="Tで始まる13桁の登録番号。正しい形式と書く場所を、形式検証バリデータ付きで解説。">
+<meta property="og:url" content="https://invoiceflow-8qd.pages.dev/guide/regno">
+<meta property="og:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-regno.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-regno.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"適格請求書の登録番号、どこにどう書く？","author":{"@type":"Person","name":"WEBアプリを作る人"},"publisher":{"@type":"Organization","name":"InvoiceFlow"},"datePublished":"2026-07-30","description":"適格請求書発行事業者の登録番号の正しい形式と記載場所を解説。"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"登録番号の正しい形式は？","acceptedAnswer":{"@type":"Answer","text":"先頭にアルファベットのT、その後に12桁の数字が続く、合計13文字の形式です（例: T1234567890123）。法人の場合は法人番号13桁の先頭がTに置き換わった形になります。"}},
+{"@type":"Question","name":"登録番号は請求書のどこに書けばいい？","acceptedAnswer":{"@type":"Answer","text":"発行者の氏名または名称の近くに記載します。会社名・住所のまとまりに併記するのが一般的で、見落としのないよう書類の上部に置くのが安全です。"}},
+{"@type":"Question","name":"登録番号が書いてないとどうなる？","acceptedAnswer":{"@type":"Answer","text":"その書類は適格請求書として扱われず、受け取った側が仕入税額控除を受けられない可能性があります。"}},
+{"@type":"Question","name":"形式が合っていれば本物？","acceptedAnswer":{"@type":"Answer","text":"形式チェックは必要条件です。実際に登録されている番号かどうかは、国税庁の適格請求書発行事業者公表サイトで確認してください。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;
+  --shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;
+  --ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;
+  --mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.45;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
+  repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.25);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:860px;margin:0 auto;padding:0 32px}
+
+nav{background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-inner{max-width:860px;margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--mincho);font-weight:800;font-size:18px;text-decoration:none;color:var(--sumi)}
+.brand em{font-style:normal;color:var(--shu)}
+.nav-x{font-size:12px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}
+.nav-x:hover{color:var(--shu)}
+
+header.hero{padding:64px 0 32px}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(30px,4.2vw,46px);line-height:1.35;margin:14px 0 18px;letter-spacing:.01em}
+h1 .accent{color:var(--shu)}
+.lead{color:var(--sumi-soft);font-size:15px;max-width:54ch}
+
+.article-body{font-size:15.5px}
+.article-body h2{font-family:var(--mincho);font-weight:700;font-size:24px;margin:42px 0 16px}
+.article-body h3{font-family:var(--mincho);font-weight:700;font-size:19px;margin:28px 0 12px}
+.article-body p{margin-bottom:18px}
+.article-body ul{margin:16px 0 20px;padding-left:22px}
+.article-body li{margin-bottom:6px}
+.article-body .note{font-size:13.5px;color:var(--sumi-soft);background:var(--paper-2);padding:14px 18px;border-left:3px solid var(--shu);margin:20px 0}
+.article-body a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.article-body a:hover{border-bottom-color:var(--ai)}
+
+/* format anatomy */
+.anatomy{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px 28px;margin:24px 0;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.anatomy .lbl{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--sumi-soft);margin-bottom:14px}
+.slots{display:flex;gap:6px;flex-wrap:wrap;font-family:var(--mono)}
+.slot{width:38px;height:48px;border:2px solid var(--ledger);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;background:var(--paper);transition:all .3s}
+.slot.t{border-color:var(--shu);color:var(--shu);background:#fdecea}
+.slot.d{color:var(--sumi)}
+.slot.fill-ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.slot.fill-bad{border-color:var(--shu);background:#fdecea;color:var(--shu);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.slot-labels{display:flex;gap:6px;margin-top:8px;font-size:10px;color:var(--sumi-soft)}
+.slot-labels span{width:38px;text-align:center}
+
+/* validator */
+.validator{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;margin:32px 0;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.validator .vtitle{font-family:var(--mincho);font-weight:700;font-size:18px;margin-bottom:6px}
+.validator .vsub{font-size:13px;color:var(--sumi-soft);margin-bottom:18px}
+.vinput-wrap{display:flex;align-items:center;border:2px solid var(--ledger);border-radius:6px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.vinput-wrap:focus-within{border-color:var(--ai);box-shadow:0 0 0 3px var(--ai-soft)}
+.vinput-wrap.ok{border-color:var(--ok)}
+.vinput-wrap.bad{border-color:var(--shu)}
+.vinput{border:none;outline:none;padding:14px 16px;font-size:20px;font-family:var(--mono);font-weight:600;letter-spacing:.08em;width:100%;color:var(--sumi);background:transparent}
+.vstatus{padding:0 18px;font-size:22px;flex-shrink:0}
+.vmeta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
+.vcount{font-family:var(--mono);font-size:13px;color:var(--sumi-soft)}
+.vcount b{color:var(--sumi)}
+.vcount .good{color:var(--ok)}.vcount .bad{color:var(--shu)}
+.vresult{font-size:13.5px;font-weight:700;padding:6px 14px;border-radius:3px}
+.vresult.ok{background:var(--ok-soft);color:var(--ok)}
+.vresult.bad{background:#fdecea;color:var(--shu)}
+.vresult.idle{background:var(--paper-2);color:var(--sumi-soft)}
+.vlink{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;color:var(--ai);text-decoration:none;border:1px solid var(--ai-soft);padding:8px 14px;border-radius:4px;background:var(--ai-soft);transition:all .2s}
+.vlink:hover{background:var(--ai);color:#fff}
+
+/* related guides cluster */
+.cluster{margin:48px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.cluster{grid-template-columns:1fr}}
+.cluster a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;text-decoration:none;color:var(--sumi);transition:transform .2s,box-shadow .2s,border-color .2s}
+.cluster a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,33,40,.1);border-color:var(--ledger)}
+.cluster .ct{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.cluster .ch{font-family:var(--mincho);font-weight:700;font-size:15px;margin-top:5px}
+.cluster .cd{font-size:12px;color:var(--sumi-soft);margin-top:4px}
+
+.cta-band{background:var(--shu);color:#fff;padding:48px 0;margin:48px 0 0}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cta-band h2{font-family:var(--mincho);font-weight:800;font-size:26px;line-height:1.35;color:#fff}
+.btn-paper{display:inline-flex;align-items:center;gap:7px;background:var(--paper);color:var(--shu);font-weight:700;font-size:14px;padding:12px 24px;border-radius:4px;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .18s}
+.btn-paper:hover{transform:translateY(-2px)}
+
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:36px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:16px;color:var(--paper)}
+.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none}
+footer a:hover{color:var(--shu)}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div>
+<div class="margin-line"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="https://invoiceflow-8qd.pages.dev/">Invoice<em>Flow</em></a>
+    <a class="nav-x" href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">GUIDE — 解説 02</span>
+    <h1>登録番号、<span class="accent">どこに</span><br>どう書く？</h1>
+    <p class="lead">適格請求書発行事業者の登録番号は、Tで始まる13桁。形式を間違えたり、書き忘れたりすると、受け取った側が仕入税額控除を受けられなくなります。下のバリデータで、その場で形式を確認できます。</p>
+  </div>
+</header>
+
+<main class="wrap article-body">
+  <h2>登録番号の正しい形式</h2>
+  <p>登録番号は、先頭にアルファベットの <strong>T</strong>、その後に<strong>12桁の数字</strong>が続く、合計13文字の形式です。法人の場合は、法人番号13桁の先頭1桁がTに置き換わった形になります。</p>
+
+  <div class="anatomy">
+    <div class="lbl">FORM ANATOMY — 形式の解剖</div>
+    <div class="slots" id="slots">
+      <div class="slot t">T</div>
+      <div class="slot d">1</div><div class="slot d">2</div><div class="slot d">3</div><div class="slot d">4</div>
+      <div class="slot d">5</div><div class="slot d">6</div><div class="slot d">7</div><div class="slot d">8</div>
+      <div class="slot d">9</div><div class="slot d">0</div><div class="slot d">1</div><div class="slot d">2</div>
+      <div class="slot d">3</div>
+    </div>
+    <div class="slot-labels"><span>T</span><span colspan="12" style="width:auto">← 12桁の数字（法人番号由来） →</span></div>
+  </div>
+
+  <h2>その場で形式を検証</h2>
+  <p>手持ちの登録番号、あるいは取引先から受け取った番号を入力してください。形式が正しいか、桁数が足りているかをリアルタイムで判定します。</p>
+
+  <div class="validator">
+    <div class="vtitle">登録番号バリデータ</div>
+    <div class="vsub">Tを含めて入力してください（例: T1234567890123）</div>
+    <div class="vinput-wrap" id="vwrap">
+      <input class="vinput" id="vinput" placeholder="T1234567890123" maxlength="13" spellcheck="false" autocomplete="off">
+      <span class="vstatus" id="vstatus"></span>
+    </div>
+    <div class="vmeta">
+      <span class="vcount">入力 <b id="vlen">0</b> / 13 文字 <span id="vdigit"></span></span>
+      <span class="vresult idle" id="vresult">未入力</span>
+    </div>
+    <a class="vlink" href="https://www.invoice-system.jp/suppliers/search" target="_blank" rel="noopener">国税庁 公表サイトで実在を確認する ↗</a>
+  </div>
+
+  <div class="note">形式チェックは必要条件です。形式が正しくても、実際に登録されている番号かどうかは必ず国税庁の公表サイトで確認してください。ここへのリンクを上に用意しました。</div>
+
+  <h2>請求書のどこに書くか</h2>
+  <p>登録番号は、<strong>発行者の氏名または名称の近く</strong>に記載します。会社名・住所・連絡先をまとめたブロックに併記するのが一般的で、見落としを防ぐため書類の上部に置くのが安全です。InvoiceFlowでは発行者情報の欄に入力すれば、プレビューとPDFの正しい位置に自動で配置されます。</p>
+
+  <h3>書き忘れるとどうなるか</h3>
+  <p>登録番号の記載がない書類は、適格請求書として扱われません。受け取った側は、その取引について仕入税額控除を受けられなくなる可能性があります。つまり書き忘れのコストは、自分ではなく取引先に降りかかる——だからこそ、形式と記載位置の両方を機械に確認させる価値があります。</p>
+
+  <h2>判断の順番</h2>
+  <p>「番号は覚えているから手書きでいい」——これが一番危ない。1桁のミスやTの抜けは目視では見落としやすく、しかも影響が出るのは数ヶ月後の税務処理です。正しい順番は「形式をバリデータで確認する」→「国税庁で実在を確認する」→「請求書の所定位置に固定する」。確認を記憶ではなく仕組みに任せるのが、インボイス対応の本質です。</p>
+
+  <div class="cluster">
+    <a href="mixed-tax.html"><div class="ct">GUIDE 01</div><div class="ch">8%と10%混在の消費税計算</div><div class="cd">動く計算機で税率区分を検証</div></a>
+    <a href="reduced-rate.html"><div class="ct">GUIDE 03</div><div class="ch">軽減税率8%の対象品目</div><div class="cd">これは8%？10%？を判定</div></a>
+    <a href="https://tekicheck.pages.dev/"><div class="ct">TOOL</div><div class="ch">TekiCheck</div><div class="cd">受け取った請求書を8項目で診断</div></a>
+    <a href="https://invoiceflow-8qd.pages.dev/app"><div class="ct">TOOL</div><div class="ch">InvoiceFlow</div><div class="cd">登録番号込みで請求書を作成</div></a>
+  </div>
+</main>
+
+<div class="cta-band">
+  <div class="wrap cta-inner">
+    <h2>確認した番号を、請求書の正しい位置に固定する。</h2>
+    <a class="btn-paper" href="https://invoiceflow-8qd.pages.dev/app">InvoiceFlowで請求書を作る →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">Invoice<em>Flow</em></div>
+    <div>判断の順番で、Webアプリをつくる。</div>
+    <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const input=$('vinput'),wrap=$('vwrap'),status=$('vstatus'),len=$('vlen'),digit=$('vdigit'),result=$('vresult');
+const slotEls=document.querySelectorAll('#slots .slot');
+
+input.addEventListener('input',()=>{
+  let v=input.value.toUpperCase().replace(/[^T0-9]/g,'');
+  // 先頭Tを強制: Tが複数あっても先頭1つだけ
+  if(v.indexOf('T')>0){ v='T'+v.replace(/T/g,''); }
+  if(v.length>13) v=v.slice(0,13);
+  input.value=v;
+  render(v);
+});
+
+function render(v){
+  len.textContent=v.length;
+  // fill slots
+  for(let i=0;i<slotEls.length;i++){
+    const el=slotEls[i];
+    el.classList.remove('fill-ok','fill-bad');
+    if(i<v.length){
+      const ch=v[i];
+      const expectT=(i===0);
+      const ok = expectT ? ch==='T' : /[0-9]/.test(ch);
+      el.textContent=ch;
+      el.classList.add(ok?'fill-ok':'fill-bad');
+    }else{
+      el.textContent = i===0?'T':((i)%10);
+    }
+  }
+  const hasT = v.length>0 && v[0]==='T';
+  const digits = v.replace(/^T/,'');
+  const digitOnly = /^[0-9]*$/.test(digits);
+  const full = v.length===13 && hasT && digits.length===12 && digitOnly;
+
+  if(v.length===0){
+    wrap.className='vinput-wrap';status.textContent='';
+    result.className='vresult idle';result.textContent='未入力';
+    digit.innerHTML='';
+    return;
+  }
+  if(full){
+    wrap.className='vinput-wrap ok';status.textContent='✓';
+    result.className='vresult ok';result.textContent='✓ 形式OK（T+12桁数字）';
+    digit.innerHTML='— <span class="good">数字12桁そろいました</span>';
+  }else{
+    wrap.className='vinput-wrap bad';status.textContent='✕';
+    let why='';
+    if(!hasT) why='先頭に T が必要です';
+    else if(!digitOnly) why='Tの後は数字だけにしてください';
+    else if(digits.length<12) why='数字があと '+(12-digits.length)+' 桁不足';
+    else why='形式を確認してください';
+    result.className='vresult bad';result.textContent='✕ '+why;
+    digit.innerHTML='— <span class="bad">数字 '+digits.length+'/12</span>';
+  }
+}
+render('');
+</script>
+</body>
+</html>

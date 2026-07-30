@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>軽減税率8%になるのはどれ？ 飲食料品・新聞の判定チェッカー — InvoiceFlow Guide</title>
+<meta name="description" content="消費税の軽減税率8%が適用される品目（飲食料品・定期購読の新聞）と、8%にならない例外（酒類・外食）を、条件を選んで判定できるチェッカーで解説。">
+<link rel="canonical" href="https://invoiceflow-8qd.pages.dev/guide/reduced-rate">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="InvoiceFlow">
+<meta property="og:title" content="軽減税率8%になるのはどれ？">
+<meta property="og:description" content="飲食料品・新聞の軽減税率。8%になるものとならない例外を、判定チェッカーで確認。">
+<meta property="og:url" content="https://invoiceflow-8qd.pages.dev/guide/reduced-rate">
+<meta property="og:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-reduced.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-reduced.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"軽減税率8%になるのはどれ？","author":{"@type":"Person","name":"WEBアプリを作る人"},"publisher":{"@type":"Organization","name":"InvoiceFlow"},"datePublished":"2026-07-30","description":"軽減税率8%の対象品目と例外を判定チェッカーで解説。"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"軽減税率8%の対象は？","acceptedAnswer":{"@type":"Answer","text":"酒類と外食を除く飲食料品、および週2回以上発行され定期購読される新聞です。"}},
+{"@type":"Question","name":"お酒は8%になりますか？","acceptedAnswer":{"@type":"Answer","text":"なりません。アルコール度数1度以上の酒類は標準税率10%です。"}},
+{"@type":"Question","name":"レストランでの食事は8%ですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ、外食・ケータリングは10%です。同じ料理でも持ち帰り（テイクアウト）なら8%になります。"}},
+{"@type":"Question","name":"テイクアウトと店内飲食で税率が変わるのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"軽減税率は「飲食料品の譲渡」に適用され、設備を設けて飲食させる役務（外食）は対象外とされているためです。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;
+  --shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;
+  --ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;
+  --mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.45;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
+  repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.25);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:860px;margin:0 auto;padding:0 32px}
+
+nav{background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-inner{max-width:860px;margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--mincho);font-weight:800;font-size:18px;text-decoration:none;color:var(--sumi)}
+.brand em{font-style:normal;color:var(--shu)}
+.nav-x{font-size:12px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}
+.nav-x:hover{color:var(--shu)}
+
+header.hero{padding:64px 0 32px}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(30px,4.2vw,46px);line-height:1.35;margin:14px 0 18px;letter-spacing:.01em}
+h1 .accent{color:var(--shu)}
+.lead{color:var(--sumi-soft);font-size:15px;max-width:54ch}
+
+.article-body{font-size:15.5px}
+.article-body h2{font-family:var(--mincho);font-weight:700;font-size:24px;margin:42px 0 16px}
+.article-body h3{font-family:var(--mincho);font-weight:700;font-size:19px;margin:28px 0 12px}
+.article-body p{margin-bottom:18px}
+.article-body ul{margin:16px 0 20px;padding-left:22px}
+.article-body li{margin-bottom:6px}
+.article-body .note{font-size:13.5px;color:var(--sumi-soft);background:var(--paper-2);padding:14px 18px;border-left:3px solid var(--shu);margin:20px 0}
+.article-body a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.article-body a:hover{border-bottom-color:var(--ai)}
+
+/* checker */
+.checker{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;margin:32px 0;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.checker .ctitle{font-family:var(--mincho);font-weight:700;font-size:18px;margin-bottom:18px}
+.q{margin-bottom:20px}
+.q .ql{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft);margin-bottom:9px}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.cats{grid-template-columns:1fr}}
+.cat{border:2px solid var(--ledger);border-radius:6px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--paper);font-size:13.5px;font-weight:600}
+.cat:hover{border-color:var(--ai)}
+.cat.on{border-color:var(--ai);background:var(--ai-soft);color:var(--ai)}
+.cat .ico{font-size:22px;display:block;margin-bottom:4px}
+.conds{display:grid;gap:10px;margin-top:4px}
+.cond{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:6px;padding:12px 16px;background:var(--paper)}
+.cond .cl{font-size:13.5px}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:var(--ledger);border-radius:99px;cursor:pointer;transition:.25s}
+.slider-sw::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider-sw{background:var(--shu)}
+.switch input:checked+.slider-sw::before{transform:translateX(20px)}
+
+.verdict{margin-top:22px;border-radius:8px;padding:24px;text-align:center;transition:all .4s;border:2px solid var(--line);background:var(--paper)}
+.verdict.r8{border-color:var(--ai);background:var(--ai-soft)}
+.verdict.r10{border-color:var(--shu);background:#fdecea}
+.verdict .vrate{font-family:var(--mono);font-weight:600;font-size:56px;line-height:1;transition:color .4s}
+.verdict.r8 .vrate{color:var(--ai)}.verdict.r10 .vrate{color:var(--shu)}
+.verdict .vlabel{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--sumi-soft);margin-top:4px}
+.verdict .vreason{font-size:13.5px;color:var(--sumi-soft);margin-top:12px;max-width:42ch;margin-left:auto;margin-right:auto}
+
+.cluster{margin:48px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.cluster{grid-template-columns:1fr}}
+.cluster a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;text-decoration:none;color:var(--sumi);transition:transform .2s,box-shadow .2s,border-color .2s}
+.cluster a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,33,40,.1);border-color:var(--ledger)}
+.cluster .ct{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.cluster .ch{font-family:var(--mincho);font-weight:700;font-size:15px;margin-top:5px}
+.cluster .cd{font-size:12px;color:var(--sumi-soft);margin-top:4px}
+
+.cta-band{background:var(--shu);color:#fff;padding:48px 0;margin:48px 0 0}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cta-band h2{font-family:var(--mincho);font-weight:800;font-size:26px;line-height:1.35;color:#fff}
+.btn-paper{display:inline-flex;align-items:center;gap:7px;background:var(--paper);color:var(--shu);font-weight:700;font-size:14px;padding:12px 24px;border-radius:4px;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .18s}
+.btn-paper:hover{transform:translateY(-2px)}
+
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:36px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:16px;color:var(--paper)}
+.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none}
+footer a:hover{color:var(--shu)}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div>
+<div class="margin-line"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="https://invoiceflow-8qd.pages.dev/">Invoice<em>Flow</em></a>
+    <a class="nav-x" href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">GUIDE — 解説 03</span>
+    <h1>それ、<span class="accent">8%</span>に<br>していい？</h1>
+    <p class="lead">軽減税率8%が適用されるのは、酒類と外食を除く飲食料品、そして定期購読の新聞。同じ食べ物でも「持ち帰り」か「店内」かで税率が変わります。下のチェッカーで、品目の条件を選んで判定してください。</p>
+  </div>
+</header>
+
+<main class="wrap article-body">
+  <h2>軽減税率8%の対象</h2>
+  <p>消費税の軽減税率8%が適用される品目は、大きく2つです。</p>
+  <ul>
+    <li><strong>飲食料品</strong>（酒類と外食・ケータリングを除く）</li>
+    <li><strong>新聞</strong>（週2回以上発行され、定期購読されるもの）</li>
+  </ul>
+  <p>ここに「例外」が潜んでいるのが厄介なところです。お酒は飲食料品でも10%、レストランの食事も10%。判定を間違えると、請求書の税率区分が崩れます。</p>
+
+  <h2>品目の条件で判定</h2>
+  <p>カテゴリを選び、該当する条件をオンにしてください。適用税率とその理由がその場で出ます。</p>
+
+  <div class="checker">
+    <div class="ctitle">軽減税率チェッカー</div>
+    <div class="q">
+      <div class="ql">STEP 1 — 品目のカテゴリ</div>
+      <div class="cats" id="cats">
+        <div class="cat on" data-c="food"><span class="ico">🍚</span>飲食料品</div>
+        <div class="cat" data-c="news"><span class="ico">📰</span>新聞</div>
+        <div class="cat" data-c="other"><span class="ico">📦</span>それ以外</div>
+      </div>
+    </div>
+
+    <div class="q" id="foodConds">
+      <div class="ql">STEP 2 — 飲食料品の条件</div>
+      <div class="conds">
+        <div class="cond"><span class="cl">アルコール度数1度以上の酒類</span><label class="switch"><input type="checkbox" id="cAlcohol"><span class="slider-sw"></span></label></div>
+        <div class="cond"><span class="cl">外食・ケータリング（店内飲食 / 出張料理）</span><label class="switch"><input type="checkbox" id="cEatOut"><span class="slider-sw"></span></label></div>
+      </div>
+    </div>
+
+    <div class="q" id="newsConds" style="display:none">
+      <div class="ql">STEP 2 — 新聞の条件</div>
+      <div class="conds">
+        <div class="cond"><span class="cl">週2回以上発行され、定期購読されている</span><label class="switch"><input type="checkbox" id="cSubscribe" checked><span class="slider-sw"></span></label></div>
+      </div>
+    </div>
+
+    <div class="verdict r8" id="verdict">
+      <div class="vrate" id="vrate">8%</div>
+      <div class="vlabel" id="vlabel">軽減税率</div>
+      <div class="vreason" id="vreason">酒類・外食に該当しない飲食料品は、軽減税率8%の対象です。</div>
+    </div>
+  </div>
+
+  <div class="note">テイクアウトと店内飲食で税率が変わるのは、軽減税率が「飲食料品の譲渡」に適用され、設備を設けて飲食させる役務（外食）は対象外とされているためです。同じ弁当でも、持ち帰れば8%、イートインで食べれば10%になります。</div>
+
+  <h2>請求書への反映</h2>
+  <p>判定結果の税率を、InvoiceFlowの明細行でそのまま選べます。8%と10%が混在する請求書でも、行ごとに税率を指定すれば、税率ごとの対価の額と消費税額を自動で区分計算します。混在時の計算ロジックは<a href="mixed-tax.html">解説01</a>で実際に試せます。</p>
+
+  <h2>判断の順番</h2>
+  <p>「食べ物だから全部8%」——この思い込みが一番多いミスです。酒類と外食という2つの例外を先に確認する順番にすれば、判定は機械的に決まります。迷ったらカテゴリと条件をチェッカーに通す。記憶で税率を決めないことが、インボイス対応ではそのまま信頼につながります。</p>
+
+  <div class="cluster">
+    <a href="mixed-tax.html"><div class="ct">GUIDE 01</div><div class="ch">8%と10%混在の消費税計算</div><div class="cd">動く計算機で税率区分を検証</div></a>
+    <a href="regno.html"><div class="ct">GUIDE 02</div><div class="ch">登録番号の書き方と検証</div><div class="cd">T+13桁をバリデータで確認</div></a>
+    <a href="https://tekicheck.pages.dev/"><div class="ct">TOOL</div><div class="ch">TekiCheck</div><div class="cd">受け取った請求書を8項目で診断</div></a>
+    <a href="https://invoiceflow-8qd.pages.dev/app"><div class="ct">TOOL</div><div class="ch">InvoiceFlow</div><div class="cd">税率込みで請求書を作成</div></a>
+  </div>
+</main>
+
+<div class="cta-band">
+  <div class="wrap cta-inner">
+    <h2>判定した税率を、明細行にそのまま反映する。</h2>
+    <a class="btn-paper" href="https://invoiceflow-8qd.pages.dev/app">InvoiceFlowで請求書を作る →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">Invoice<em>Flow</em></div>
+    <div>判断の順番で、Webアプリをつくる。</div>
+    <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+let cat='food';
+
+document.querySelectorAll('#cats .cat').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('#cats .cat').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on');
+    cat=el.dataset.c;
+    $('foodConds').style.display = cat==='food'?'':'none';
+    $('newsConds').style.display = cat==='news'?'':'none';
+    judge();
+  });
+});
+['cAlcohol','cEatOut','cSubscribe'].forEach(id=>$(id).addEventListener('change',judge));
+
+function set(rate,label,reason){
+  const v=$('verdict');
+  v.className='verdict '+(rate==='8%'?'r8':'r10');
+  $('vrate').textContent=rate;
+  $('vlabel').textContent=label;
+  $('vreason').textContent=reason;
+}
+
+function judge(){
+  if(cat==='other'){
+    set('10%','標準税率','飲食料品・定期購読の新聞以外は、標準税率10%です。');
+    return;
+  }
+  if(cat==='news'){
+    if($('cSubscribe').checked){
+      set('8%','軽減税率','週2回以上発行され定期購読される新聞は、軽減税率8%の対象です。');
+    }else{
+      set('10%','標準税率','定期購読でない新聞（都度購入・週2回未満）は10%です。');
+    }
+    return;
+  }
+  // food
+  if($('cAlcohol').checked){
+    set('10%','標準税率','アルコール度数1度以上の酒類は、飲食料品でも軽減税率の対象外。10%です。');
+  }else if($('cEatOut').checked){
+    set('10%','標準税率','外食・ケータリングは役務の提供とみなされ10%。持ち帰りなら8%になります。');
+  }else{
+    set('8%','軽減税率','酒類・外食に該当しない飲食料品は、軽減税率8%の対象です。');
+  }
+}
+judge();
+</script>
+</body>
+</html>

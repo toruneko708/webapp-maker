@@ -84,6 +84,15 @@ h1 .accent{color:var(--shu)}
 .stack-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--sumi-soft)}
 
 .cta-band{background:var(--shu);color:#fff;padding:48px 0;margin:48px 0 0}
+.cluster{margin:48px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.cluster{grid-template-columns:1fr}}
+.cluster a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;text-decoration:none;color:var(--sumi);transition:transform .2s,box-shadow .2s,border-color .2s}
+.cluster a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,33,40,.1);border-color:var(--ledger)}
+.cluster .ct{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.cluster .ch{font-family:var(--mincho);font-weight:700;font-size:15px;margin-top:5px}
+.cluster .cd{font-size:12px;color:var(--sumi-soft);margin-top:4px}
+.article-body a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.article-body a:hover{border-bottom-color:var(--ai)}
 .cta-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .cta-band h2{font-family:var(--mincho);font-weight:800;font-size:26px;line-height:1.35;color:#fff}
 
@@ -164,6 +173,13 @@ footer a:hover{color:var(--shu)}
   <h2>判断の順番</h2>
   <p>「消費税の計算は面倒だから全部10%でいいや」——これは危険です。軽減税率の対象品目を10%で請求すると、受け取った側が仕入税額控除を過大に計上する可能性があり、税務調査で指摘されるリスクがあります。</p>
   <p>正しい順番は「税率の区分を先に確認する」→「計算をツールに任せる」→「請求書に正しく反映する」です。判断の順番を間違えると、努力が全部空振りします。</p>
+
+  <div class="cluster">
+    <a href="regno.html"><div class="ct">GUIDE 02</div><div class="ch">登録番号の書き方と検証</div><div class="cd">T+13桁をバリデータで確認</div></a>
+    <a href="reduced-rate.html"><div class="ct">GUIDE 03</div><div class="ch">軽減税率8%の対象品目</div><div class="cd">これは8%？10%？を判定</div></a>
+    <a href="https://tekicheck.pages.dev/"><div class="ct">TOOL</div><div class="ch">TekiCheck</div><div class="cd">受け取った請求書を8項目で診断</div></a>
+    <a href="https://invoiceflow-8qd.pages.dev/app"><div class="ct">TOOL</div><div class="ch">InvoiceFlow</div><div class="cd">税率込みで請求書を作成</div></a>
+  </div>
 </main>
 
 <div class="cta-band">
