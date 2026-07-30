@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>請求書は7年保存？ 電子帳簿保存法で紙に印刷していい？ — InvoiceFlow Guide</title>
+<meta name="description" content="請求書・領収書の保存期間（原則7年、欠損金・損失繰越がある年は10年）と、電子データで受け取った請求書を紙に印刷してよいかを、保存期限チェッカーと電子取引の要件チェックで解説。">
+<link rel="canonical" href="https://invoiceflow-8qd.pages.dev/guide/retain">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="InvoiceFlow">
+<meta property="og:title" content="請求書は7年保存？ 電子帳簿保存法で紙に印刷していい？">
+<meta property="og:description" content="保存期間7年/10年の判定と、電子取引データの保存要件をチェッカーで確認。">
+<meta property="og:url" content="https://invoiceflow-8qd.pages.dev/guide/retain">
+<meta property="og:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-retain.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://invoiceflow-8qd.pages.dev/guide/ogp-retain.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"請求書は7年保存？ 電子帳簿保存法で紙に印刷していい？","author":{"@type":"Person","name":"WEBアプリを作る人"},"publisher":{"@type":"Organization","name":"InvoiceFlow"},"datePublished":"2026-07-30","description":"帳簿・書類の保存期間と電子帳簿保存法の電子取引要件をチェッカーで解説。"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"請求書や領収書は何年保存すればいい？","acceptedAnswer":{"@type":"Answer","text":"原則7年です。ただし法人で欠損金が生じた事業年度、個人で損失の繰越控除を受ける年分については、その年分の帳簿・書類は10年保存します。決算関係書類（財務諸表・決算書など）は10年です。"}},
+{"@type":"Question","name":"メールで受け取ったPDF請求書、印刷して保存していい？","acceptedAnswer":{"@type":"Answer","text":"原則としてダメです。電子データで授受した取引（電子取引）は、電子データのまま保存する義務があり、2024年1月以降は宥恕措置が終了しています。紙に印刷しての保存は認められません。"}},
+{"@type":"Question","name":"電子保存の要件は？","acceptedAnswer":{"@type":"Answer","text":"検索要件（日付・金額・取引先で検索できること等）と、改ざん防止要件（タイムスタンプ、訂正削除の履歴、訂正削除ができないシステム、または事務処理規程のいずれか）を満たす必要があります。"}},
+{"@type":"Question","name":"紙でもらった請求書は？","acceptedAnswer":{"@type":"Answer","text":"紙で受け取った請求書は、紙のまま保存して問題ありません。任意でスキャナ保存制度を使うこともできます。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;
+  --shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;
+  --ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;
+  --mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.45;
+  background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
+  repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.25);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:860px;margin:0 auto;padding:0 32px}
+
+nav{background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.nav-inner{max-width:860px;margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:var(--mincho);font-weight:800;font-size:18px;text-decoration:none;color:var(--sumi)}
+.brand em{font-style:normal;color:var(--shu)}
+.nav-x{font-size:12px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}
+.nav-x:hover{color:var(--shu)}
+
+header.hero{padding:64px 0 32px}
+.kicker{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(30px,4.2vw,46px);line-height:1.35;margin:14px 0 18px;letter-spacing:.01em}
+h1 .accent{color:var(--shu)}
+.lead{color:var(--sumi-soft);font-size:15px;max-width:56ch}
+
+.article-body{font-size:15.5px}
+.article-body h2{font-family:var(--mincho);font-weight:700;font-size:24px;margin:42px 0 16px}
+.article-body h3{font-family:var(--mincho);font-weight:700;font-size:19px;margin:28px 0 12px}
+.article-body p{margin-bottom:18px}
+.article-body ul{margin:16px 0 20px;padding-left:22px}
+.article-body li{margin-bottom:6px}
+.article-body .note{font-size:13.5px;color:var(--sumi-soft);background:var(--paper-2);padding:14px 18px;border-left:3px solid var(--shu);margin:20px 0}
+.article-body a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.article-body a:hover{border-bottom-color:var(--ai)}
+
+/* shared checker shell */
+.checker{background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;margin:32px 0;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.checker .ctitle{font-family:var(--mincho);font-weight:700;font-size:18px;margin-bottom:6px}
+.checker .csub{font-size:13px;color:var(--sumi-soft);margin-bottom:20px}
+.q{margin-bottom:18px}
+.q .ql{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft);margin-bottom:9px}
+.seg{display:inline-flex;border:1px solid var(--ledger);border-radius:5px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:none;background:#fff;padding:10px 16px;font-size:13px;font-weight:600;color:var(--sumi-soft);cursor:pointer;font-family:var(--gothic);transition:all .15s}
+.seg button.on{background:var(--sumi);color:#fff}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:560px){.cats{grid-template-columns:1fr}}
+.cat{border:2px solid var(--ledger);border-radius:6px;padding:13px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--paper);font-size:13px;font-weight:600}
+.cat:hover{border-color:var(--ai)}
+.cat.on{border-color:var(--ai);background:var(--ai-soft);color:var(--ai)}
+.cat .ico{font-size:20px;display:block;margin-bottom:4px}
+.cond{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:6px;padding:12px 16px;background:var(--paper);margin-bottom:10px}
+.cond .cl{font-size:13.5px}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:var(--ledger);border-radius:99px;cursor:pointer;transition:.25s}
+.slider-sw::before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider-sw{background:var(--ai)}
+.switch input:checked+.slider-sw::before{transform:translateX(20px)}
+
+.verdict{margin-top:8px;border-radius:8px;padding:22px 24px;border:2px solid var(--line);background:var(--paper);transition:all .4s}
+.verdict.r7{border-color:var(--ai);background:var(--ai-soft)}
+.verdict.r10{border-color:var(--shu);background:#fdecea}
+.verdict .vrow{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.verdict .vlabel{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft)}
+.verdict .vyears{font-family:var(--mono);font-weight:600;font-size:42px;line-height:1}
+.verdict.r7 .vyears{color:var(--ai)}.verdict.r10 .vyears{color:var(--shu)}
+.verdict .vnote{font-size:13px;color:var(--sumi-soft);margin-top:10px}
+
+/* e-doc result */
+.everdict{margin-top:8px;border-radius:8px;padding:22px 24px;border:2px solid var(--line);transition:all .4s}
+.everdict.ok{border-color:var(--ok);background:var(--ok-soft)}
+.everdict.bad{border-color:var(--shu);background:#fdecea}
+.everdict.warn{border-color:#e0a23a;background:#fdf6e8}
+.everdict .et{font-family:var(--mincho);font-weight:700;font-size:18px;margin-bottom:6px}
+.everdict.ok .et{color:var(--ok)}.everdict.bad .et{color:var(--shu)}.everdict.warn .et{color:#9a6b12}
+.everdict .ed{font-size:13.5px;color:var(--sumi-soft)}
+.reqs{margin-top:14px;display:grid;gap:8px}
+.req{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:10px 12px;border-radius:5px;background:rgba(255,255,255,.6);border:1px solid var(--line)}
+.req .rk{width:20px;height:20px;flex-shrink:0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;background:var(--ledger);transition:background .2s}
+.req.met .rk{background:var(--ok)}
+.req.unmet .rk{background:var(--shu)}
+.req .rt b{font-weight:700}
+
+.cluster{margin:48px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.cluster{grid-template-columns:1fr}}
+.cluster a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;text-decoration:none;color:var(--sumi);transition:transform .2s,box-shadow .2s,border-color .2s}
+.cluster a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(28,33,40,.1);border-color:var(--ledger)}
+.cluster .ct{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--shu)}
+.cluster .ch{font-family:var(--mincho);font-weight:700;font-size:15px;margin-top:5px}
+.cluster .cd{font-size:12px;color:var(--sumi-soft);margin-top:4px}
+
+.cta-band{background:var(--shu);color:#fff;padding:48px 0;margin:48px 0 0}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cta-band h2{font-family:var(--mincho);font-weight:800;font-size:26px;line-height:1.35;color:#fff}
+.btn-paper{display:inline-flex;align-items:center;gap:7px;background:var(--paper);color:var(--shu);font-weight:700;font-size:14px;padding:12px 24px;border-radius:4px;text-decoration:none;box-shadow:0 2px 0 rgba(0,0,0,.2);transition:transform .18s}
+.btn-paper:hover{transform:translateY(-2px)}
+
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:36px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:16px;color:var(--paper)}
+.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none}
+footer a:hover{color:var(--shu)}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div>
+<div class="margin-line"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="https://invoiceflow-8qd.pages.dev/">Invoice<em>Flow</em></a>
+    <a class="nav-x" href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">GUIDE — 解説 05</span>
+    <h1>その請求書、<span class="accent">7年</span>？<br>印刷していい？</h1>
+    <p class="lead">請求書や領収書の保存期間は原則7年。ただし欠損金や損失の繰越がある年は10年になります。そしてメールで受け取ったPDFを印刷して保存——これは電子帳簿保存法で原則NG。下の2つのチェッカーで、保存期間と電子保存の要否を確認してください。</p>
+  </div>
+</header>
+
+<main class="wrap article-body">
+  <h2>保存期間を判定する</h2>
+  <p>帳簿・書類の保存期間は、立場と書類の種類、そして欠損金・損失繰越の有無で決まります。条件を選ぶと、保存期間とその根拠を出します。</p>
+
+  <div class="checker">
+    <div class="ctitle">保存期限チェッカー</div>
+    <div class="csub">立場・書類区分・欠損金の有無を選んでください</div>
+
+    <div class="q">
+      <div class="ql">立場</div>
+      <div class="seg" id="roleSeg">
+        <button data-v="corp" class="on">法人</button>
+        <button data-v="ind">個人事業主</button>
+      </div>
+    </div>
+    <div class="q">
+      <div class="ql">書類の区分</div>
+      <div class="cats" id="docCats">
+        <div class="cat on" data-v="book"><span class="ico">📒</span>帳簿</div>
+        <div class="cat" data-v="doc"><span class="ico">🧾</span>請求書・領収書等</div>
+        <div class="cat" data-v="fin"><span class="ico">📊</span>決算関係書類</div>
+      </div>
+    </div>
+    <div class="q">
+      <div class="cond"><span class="cl" id="lossLabel">欠損金が生じた事業年度である</span><label class="switch"><input type="checkbox" id="lossToggle"><span class="slider-sw"></span></label></div>
+    </div>
+
+    <div class="verdict r7" id="retainVerdict">
+      <div class="vrow">
+        <span class="vlabel" id="retainLabel">保存期間</span>
+        <span class="vyears" id="retainYears">7年</span>
+      </div>
+      <div class="vnote" id="retainNote"></div>
+    </div>
+  </div>
+
+  <div class="note">起算点は、法人は事業年度終了の翌日、個人はその年分の翌年3月16日が目安とされますが、法令・国税庁の案内で必ず確認してください。保存期間の「年数」判定をこのチェッカーは担い、起算日の断定は避けています。</div>
+
+  <h2>電子データで受け取ったら、印刷していい？</h2>
+  <p>ここが一番つまずきやすい点です。メール添付のPDF、クラウド経由、EDI——<strong>電子データで授受した取引（電子取引）は、電子データのまま保存する義務</strong>があります。紙に印刷して保存するのは原則認められず、2024年1月以降は宥恕措置も終了しています。</p>
+
+  <div class="checker">
+    <div class="ctitle">電子取引 保存要件チェック</div>
+    <div class="csub">受け取り方と保存方法を選んでください</div>
+
+    <div class="q">
+      <div class="ql">この請求書・領収書の受け取り方</div>
+      <div class="seg" id="recvSeg">
+        <button data-v="e" class="on">電子データ</button>
+        <button data-v="paper">紙</button>
+      </div>
+    </div>
+
+    <div id="eBlock">
+      <div class="q">
+        <div class="cond"><span class="cl">電子データのまま保存している</span><label class="switch"><input type="checkbox" id="keepE"><span class="slider-sw"></span></label></div>
+        <div class="cond"><span class="cl">日付・金額・取引先で検索できる</span><label class="switch"><input type="checkbox" id="req1"><span class="slider-sw"></span></label></div>
+        <div class="cond"><span class="cl">日付または金額の範囲検索ができる</span><label class="switch"><input type="checkbox" id="req2"><span class="slider-sw"></span></label></div>
+        <div class="cond"><span class="cl">2項目以上の組合せ検索、またはダウンロード機能がある</span><label class="switch"><input type="checkbox" id="req3"><span class="slider-sw"></span></label></div>
+        <div class="cond"><span class="cl">改ざん防止措置（タイムスタンプ / 履歴 / 訂正不可 / 事務処理規程）</span><label class="switch"><input type="checkbox" id="req4"><span class="slider-sw"></span></label></div>
+      </div>
+    </div>
+
+    <div class="everdict warn" id="eVerdict">
+      <div class="et" id="eTitle">条件を選んでください</div>
+      <div class="ed" id="eDesc">電子データで受け取った場合は、電子保存と要件充足が必要です。</div>
+      <div class="reqs" id="eReqs"></div>
+    </div>
+  </div>
+
+  <div class="note">紙で受け取った請求書は、紙のまま保存して問題ありません。任意でスキャナ保存制度を使うこともできます。電子取引かどうかの分岐は「授受の時点で電子データだったか」で決まり、あとからスキャンした紙は電子取引には当たりません。</div>
+
+  <h2>判断の順番</h2>
+  <p>「とりあえず印刷してファイル」——これが癖になっている人は多い。でも電子データで受け取った瞬間、その書類は電子保存の対象になります。印刷した紙は、原本としては認められない。正しい順番は「授受の形式を確認する」→「電子なら電子保存の要件を満たす」→「保存期間を年数で把握する」→「起算日を法令で確認する」。保存は地味ですが、税務調査で最初に開かれるのがこの棚です。</p>
+
+  <p>受け取った請求書が適格かどうかの判定は<a href="https://tekicheck.pages.dev/">TekiCheck</a>で、<a href="exempt.html">免税事業者からの仕入と経過措置</a>も合わせて確認しておくと、受け取る側の処理が一通り揃います。</p>
+
+  <div class="cluster">
+    <a href="exempt.html"><div class="ct">GUIDE 04</div><div class="ch">免税事業者と経過措置</div><div class="cd">取引日で控除額を計算</div></a>
+    <a href="mixed-tax.html"><div class="ct">GUIDE 01</div><div class="ch">8%と10%混在の消費税計算</div><div class="cd">動く計算機で税率区分を検証</div></a>
+    <a href="regno.html"><div class="ct">GUIDE 02</div><div class="ch">登録番号の書き方と検証</div><div class="cd">T+13桁をバリデータで確認</div></a>
+    <a href="https://tekicheck.pages.dev/"><div class="ct">TOOL</div><div class="ch">TekiCheck</div><div class="cd">受け取った請求書を8項目で診断</div></a>
+  </div>
+</main>
+
+<div class="cta-band">
+  <div class="wrap cta-inner">
+    <h2>受け取る側の処理を、一通り揃えておく。</h2>
+    <a class="btn-paper" href="https://tekicheck.pages.dev/">TekiCheckで請求書を診断 →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">Invoice<em>Flow</em></div>
+    <div>判断の順番で、Webアプリをつくる。</div>
+    <a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a>
+  </div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+let role='corp', doc='book', recv='e';
+
+function bindSeg(id, set){
+  document.querySelectorAll('#'+id+' button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); set(b.dataset.v);
+    });
+  });
+}
+bindSeg('roleSeg', v=>{role=v; $('lossLabel').textContent = role==='corp'?'欠損金が生じた事業年度である':'損失の繰越控除を受ける年分である'; calcRetain();});
+bindSeg('recvSeg', v=>{recv=v; $('eBlock').style.display = v==='e'?'':'none'; calcE();});
+
+document.querySelectorAll('#docCats .cat').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('#docCats .cat').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on'); doc=el.dataset.v; calcRetain();
+  });
+});
+['lossToggle','keepE','req1','req2','req3','req4'].forEach(id=>$(id).addEventListener('change', id==='lossToggle'?calcRetain:calcE));
+
+function calcRetain(){
+  const loss=$('lossToggle').checked;
+  let years, note;
+  if(doc==='fin'){
+    years=10;
+    note='決算関係書類（財務諸表・決算書・勘定科目内訳明細書など）は、欠損金の有無にかかわらず10年保存です。';
+  }else{
+    // book or doc
+    if(loss){
+      years=10;
+      note = role==='corp'
+        ? '欠損金が生じた事業年度の帳簿・書類は、10年保存になります。'
+        : '損失の繰越控除を受ける年分について、その損失が生じた年分の帳簿・書類は10年保存になります。';
+    }else{
+      years=7;
+      note = (doc==='book'?'帳簿':'請求書・領収書等の書類')+'は原則7年保存です。欠損金・損失繰越がある年分は10年に伸びます。';
+    }
+  }
+  const v=$('retainVerdict');
+  v.className='verdict r'+years;
+  $('retainYears').textContent=years+'年';
+  $('retainLabel').textContent = role==='corp'?'法人の保存期間':'個人事業主の保存期間';
+  $('retainNote').textContent=note;
+}
+
+function calcE(){
+  const v=$('eVerdict'), t=$('eTitle'), d=$('eDesc'), box=$('eReqs');
+  if(recv==='paper'){
+    v.className='everdict ok';
+    t.textContent='紙保存でOK';
+    d.textContent='紙で受け取った請求書は、紙のまま保存して問題ありません。電子取引には当たりません。';
+    box.innerHTML='';
+    return;
+  }
+  // electronic
+  const keepE=$('keepE').checked;
+  const reqs=[
+    {k:'検1', ok:$('req1').checked, t:'<b>検索要件①</b> 日付・金額・取引先で検索できる'},
+    {k:'検2', ok:$('req2').checked, t:'<b>検索要件②</b> 日付または金額の範囲検索'},
+    {k:'検3', ok:$('req3').checked, t:'<b>検索要件③</b> 2項目以上の組合せ検索 / DL機能'},
+    {k:'改', ok:$('req4').checked, t:'<b>改ざん防止</b> タイムスタンプ / 履歴 / 訂正不可 / 規程'}
+  ];
+  box.innerHTML=reqs.map(r=>`<div class="req ${r.ok?'met':'unmet'}"><span class="rk">${r.ok?'✓':'✕'}</span><span class="rt">${r.t}</span></div>`).join('');
+
+  if(!keepE){
+    v.className='everdict bad';
+    t.textContent='✕ 紙に印刷しての保存はNG';
+    d.textContent='電子データで受け取った取引は、電子データのまま保存する義務があります。まず「電子データのまま保存」をONにしてください。';
+    return;
+  }
+  const allReq=reqs.every(r=>r.ok);
+  if(allReq){
+    v.className='everdict ok';
+    t.textContent='✓ 電子保存の要件を満たす可能性が高い';
+    d.textContent='電子データのまま保存され、検索要件・改ざん防止要件のチェックが揃っています。運用として定着させてください。';
+  }else{
+    v.className='everdict warn';
+    t.textContent='△ 電子保存中・要件が未充足';
+    d.textContent='電子データ保存はできていますが、検索要件または改ざん防止要件が足りていません。未チェックの項目を充足してください。';
+  }
+}
+
+calcRetain(); calcE();
+</script>
+</body>
+</html>
