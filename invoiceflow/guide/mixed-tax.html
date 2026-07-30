@@ -34,6 +34,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75}
 ::selection{background:var(--shu);color:#fff}
+:focus-visible{outline:2px solid var(--shu);outline-offset:2px;border-radius:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
 .ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.45;
   background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
   repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}

@@ -26,7 +26,8 @@
 {"@type":"ListItem","position":10,"name":"QuoteForge","url":"https://quoteforge.pages.dev/","description":"欲しい手取り月収から必要単価・月本数・1日稼働を逆算する見積もりシミュレーター"},
 {"@type":"ListItem","position":11,"name":"TaxVault","url":"https://taxvault.pages.dev/","description":"売上から税金退避目安を積み上げて今月の退避額を算出するシミュレーター"},
 {"@type":"ListItem","position":12,"name":"CashPulse","url":"https://cashpulse-8h9.pages.dev/","description":"月次キャッシュフローを折れ線で可視化し現金枯渇月を警告するシミュレーター"},
-{"@type":"ListItem","position":13,"name":"DealShield","url":"https://dealshield-5lo.pages.dev/","description":"フリーランス新法に基づき取引条件を条文付きでチェックし断り文を生成する取引防衛ツール"}
+{"@type":"ListItem","position":13,"name":"DealShield","url":"https://dealshield-5lo.pages.dev/","description":"フリーランス新法に基づき取引条件を条文付きでチェックし断り文を生成する取引防衛ツール"},
+{"@type":"ListItem","position":14,"name":"明示義務8項目チェック","url":"https://invoiceflow-8qd.pages.dev/guide/disclose","description":"フリーランス新法の明示義務8項目を出典条文付きで解説し、発注書の記載をその場で確認できるチェックリスト付き記事"}
 ]}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,6 +43,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.75;min-height:100vh}
 ::selection{background:var(--shu);color:#fff}
+:focus-visible{outline:2px solid var(--shu);outline-offset:2px;border-radius:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
 .ledger-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.45;
   background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),
   repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.3) 31px 32px)}
@@ -119,7 +122,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="ogp.png" alt="InvoiceFlow プレビュー">
+        <img src="ogp.png" alt="InvoiceFlow プレビュー" width="1200" height="630" loading="eager" fetchpriority="high" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -142,7 +145,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="truerate.png" alt="TrueRate プレビュー">
+        <img src="truerate.png" alt="TrueRate プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -164,7 +167,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="tekicheck.png" alt="TekiCheck プレビュー">
+        <img src="tekicheck.png" alt="TekiCheck プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -186,7 +189,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="guide-mixed.png" alt="混在税率ガイド プレビュー">
+        <img src="guide-mixed.png" alt="混在税率ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -208,7 +211,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="guide-regno.png" alt="登録番号ガイド プレビュー">
+        <img src="guide-regno.png" alt="登録番号ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -230,7 +233,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="guide-reduced.png" alt="軽減税率ガイド プレビュー">
+        <img src="guide-reduced.png" alt="軽減税率ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -252,7 +255,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="guide-exempt.png" alt="経過措置ガイド プレビュー">
+        <img src="guide-exempt.png" alt="経過措置ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -274,7 +277,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="guide-retain.png" alt="保存期間ガイド プレビュー">
+        <img src="guide-retain.png" alt="保存期間ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -296,7 +299,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="versarate.png" alt="VersaRate プレビュー">
+        <img src="versarate.png" alt="VersaRate プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -318,7 +321,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="quoteforge.png" alt="QuoteForge プレビュー">
+        <img src="quoteforge.png" alt="QuoteForge プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -340,7 +343,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="taxvault.png" alt="TaxVault プレビュー">
+        <img src="taxvault.png" alt="TaxVault プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -362,7 +365,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="cashpulse.png" alt="CashPulse プレビュー">
+        <img src="cashpulse.png" alt="CashPulse プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -384,7 +387,7 @@ footer a:hover{color:var(--shu)}
     <article class="card">
       <div class="card-img">
         <span class="card-status">公開中</span>
-        <img src="dealshield.png" alt="DealShield プレビュー">
+        <img src="dealshield.png" alt="DealShield プレビュー" width="1200" height="630" loading="lazy" decoding="async">
       </div>
       <div class="card-body">
         <div class="card-tags">
@@ -401,6 +404,28 @@ footer a:hover{color:var(--shu)}
       </div>
     </article>
     <!-- ===== /DealShield ===== -->
+
+    <!-- ===== Guide: Disclose ===== -->
+    <article class="card">
+      <div class="card-img">
+        <span class="card-status">公開中</span>
+        <img src="guide-disclose.png" alt="明示義務8項目ガイド プレビュー" width="1200" height="630" loading="lazy" decoding="async">
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag">解説</span>
+          <span class="tag free">無料</span>
+          <span class="tag">取引防衛</span>
+        </div>
+        <h2>明示義務8項目チェック</h2>
+        <p class="card-desc">フリーランス新法で発注者に義務づけられる取引条件の明示8項目を、出典条文付きで解説。発注書・契約書に揃っているかをその場で確認できるチェックリスト付き。DealShield（主軸）への入口。</p>
+        <div class="judge"><b>判断：</b>契約書をもらう「前」に8項目を確認する順にした。下流のトラブルの芽を上流で摘む。確認を記憶ではなくチェックリストに任せる盾の第一層。</div>
+        <div class="card-links">
+          <a class="btn btn-shu" href="guide/disclose.html">記事を読む →</a>
+        </div>
+      </div>
+    </article>
+    <!-- ===== /Guide Disclose ===== -->
 
   </div>
 </main>
