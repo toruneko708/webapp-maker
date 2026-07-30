@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxVault — 売上のうち、いくら別口座へ退避する？</title>
+<meta name="description" content="個人事業主・フリーランス向け。月額売上から所得税・住民税・事業税・消費税の退避目安を積み上げて算出し、今月別口座へ避けておくべき額を可視化。2割特例にも対応。">
+<link rel="canonical" href="https://taxvault.pages.dev/">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TaxVault">
+<meta property="og:title" content="TaxVault — 売上のうち、いくら退避する？">
+<meta property="og:description" content="所得税・住民税・事業税・消費税の退避目安を積み上げ、今月別口座へ避ける額を可視化。">
+<meta property="og:url" content="https://taxvault.pages.dev/">
+<meta property="og:image" content="https://taxvault.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://taxvault.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"TaxVault","url":"https://taxvault.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","description":"売上から税金退避目安を積み上げて算出するシミュレーター。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"売上から何%を退避すればいい？","acceptedAnswer":{"@type":"Answer","text":"所得水準・経費率・課税事業者かどうかで変わりますが、目安として売上の20〜35%を別口座に退避しておくと、確定申告時の支払いで現金が枯れにくくなります。このツールで自分の条件での率を確認してください。"}},
+{"@type":"Question","name":"2割特例とは何ですか？","acceptedAnswer":{"@type":"Answer","text":"免税事業者がインボイス登録で課税事業者になった場合、一定期間、売上に対する納税額を売上の2割とできる特例です。消費税の退避目安が大きく下がります。"}},
+{"@type":"Question","name":"この計算は正確な税額ですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ、退避の目安です。実際の税額は所得・控除・課税区分で変動します。確定申告は国税庁の確定申告書等作成コーナーか税理士にご確認ください。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;--shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;--ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;--amber:#e0a23a;--mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}.brand-mark em{font-style:normal;color:var(--shu)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}.nav-links a:hover{color:var(--shu)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-shu{background:var(--shu);color:#fff;box-shadow:0 2px 0 var(--shu-dark)}.btn-shu:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(214,59,47,.32),0 2px 0 var(--shu-dark)}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.btn-paper{background:var(--paper);color:var(--shu);box-shadow:0 2px 0 rgba(0,0,0,.2)}.btn-paper:hover{transform:translateY(-2px)}
+.hero{padding:72px 0 36px}.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(38px,5.4vw,64px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--shu);position:relative;white-space:nowrap}h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(214,59,47,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:42ch;margin-bottom:26px}
+.hero-proof{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}.hero-proof span{display:inline-flex;align-items:center;gap:6px}.hero-proof b{color:var(--shu);font-weight:700}
+.vault{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12)}
+.vault-top{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--sumi-soft);text-transform:uppercase;margin-bottom:14px}
+.vault-amount{font-family:var(--mono);font-weight:600;font-size:clamp(34px,6vw,46px);line-height:1;color:var(--shu);letter-spacing:-.02em;transition:color .3s}
+.vault-sub{font-size:12.5px;color:var(--sumi-soft);margin-top:6px}
+.vault-sub b{font-family:var(--mono);font-weight:600}
+.stack{display:flex;height:18px;border-radius:4px;overflow:hidden;background:var(--paper-2);margin:20px 0 12px}
+.stack i{display:block;height:100%;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.stack .s-consump{background:var(--shu)}.stack .s-income{background:#e8766c}.stack .s-resident{background:var(--ai)}.stack .s-business{background:#5a7bb0}.stack .s-exp{background:var(--amber)}.stack .s-keep{background:var(--ok)}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:7px 16px;font-size:11.5px;color:var(--sumi-soft)}
+.legend span{display:inline-flex;align-items:center;gap:7px}.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}.legend b{font-family:var(--mono);font-weight:600;color:var(--sumi)}
+.year-line{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--sumi-soft)}
+.year-line .v{font-family:var(--mono);font-weight:600;color:var(--sumi)}
+.inputs{padding:14px 0 70px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.card-head{padding:15px 22px;border-bottom:1px solid var(--paper-2)}
+.card-title{font-family:var(--mincho);font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px}.card-title::before{content:"";width:4px;height:17px;background:var(--shu);border-radius:1px}
+.card-body{padding:24px 22px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 26px}
+@media(max-width:680px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .fl{display:flex;justify-content:space-between;align-items:baseline}
+.field .fl label{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)}
+.field .fl .val{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--shu)}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff}
+.num .pre,.num .suf{padding:0 11px;color:var(--sumi-soft);font-size:13px;background:var(--paper);align-self:stretch;display:flex;align-items:center}
+.num .pre{border-right:1px solid var(--ledger)}.num .suf{border-left:1px solid var(--ledger)}
+.num input{border:none;outline:none;padding:10px 11px;font-size:15px;font-family:var(--mono);font-weight:500;width:100%;color:var(--sumi);background:transparent}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--ledger);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;box-shadow:0 1px 4px rgba(214,59,47,.4);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;cursor:pointer}
+.hint{font-size:10.5px;color:var(--sumi-soft)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:6px;padding:12px 16px;background:var(--paper)}
+.toggle-row .cl{font-size:13px}
+.switch{position:relative;width:44px;height:25px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;inset:0;background:var(--ledger);border-radius:99px;cursor:pointer;transition:.25s}
+.slider-sw::before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch input:checked+.slider-sw{background:var(--ai)}
+.switch input:checked+.slider-sw::before{transform:translateX(19px)}
+.sub-toggle{margin-top:10px;opacity:.45;pointer-events:none;transition:opacity .25s}
+.sub-toggle.live{opacity:1;pointer-events:auto}
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"退";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#ff9d94}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+.cta{background:var(--shu);color:#fff;padding:72px 0;position:relative;overflow:hidden}
+.cta::before{content:"⛁";position:absolute;right:50px;top:50%;transform:translateY(-50%);font-size:260px;line-height:1;color:rgba(255,255,255,.08)}
+.cta-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.cta h2{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.35;color:#fff;max-width:20ch}
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}footer a:hover{color:var(--shu)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div><div class="margin-line"></div>
+<nav><div class="nav-inner">
+  <a class="brand" href="#"><span class="brand-mark">Tax<em>Vault</em></span><span class="brand-sub">退避</span></a>
+  <div class="nav-links"><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a><a class="btn btn-shu" href="#calc">計算する →</a></div>
+</div></nav>
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="kicker">退避する道具</span>
+    <h1>その売上、<br><span class="accent">全部</span>自分の<br>金じゃない。</h1>
+    <p class="hero-lead">確定申告の月、口座を見て青くなった経験はないか。売上は自分のものではない——所得税・住民税・事業税・消費税が、あとからまとめて請求される。売上のうち退避すべき額を積み上げて、今月別口座へ避けておく数字を出す。</p>
+    <div class="hero-proof"><span><b>✓</b> 登録不要</span><span><b>✓</b> ずっと無料</span><span><b>✓</b> 2割特例対応</span></div>
+  </div>
+  <div class="vault">
+    <div class="vault-top">今月、別口座へ退避</div>
+    <div class="vault-amount" id="reserveAmt">¥0</div>
+    <div class="vault-sub">売上の <b id="reservePct">0%</b> ／ 年間換算 <b id="reserveYear">¥0</b></div>
+    <div class="stack">
+      <i class="s-consump" id="bCon" style="width:0%"></i><i class="s-income" id="bInc" style="width:0%"></i>
+      <i class="s-resident" id="bRes" style="width:0%"></i><i class="s-business" id="bBus" style="width:0%"></i>
+      <i class="s-exp" id="bExp" style="width:0%"></i><i class="s-keep" id="bKeep" style="width:0%"></i>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--shu)"></i>消費税 <b id="lCon">¥0</b></span>
+      <span><i style="background:#e8766c"></i>所得税 <b id="lInc">¥0</b></span>
+      <span><i style="background:var(--ai)"></i>住民税 <b id="lRes">¥0</b></span>
+      <span><i style="background:#5a7bb0"></i>事業税 <b id="lBus">¥0</b></span>
+      <span><i style="background:var(--amber)"></i>経費 <b id="lExp">¥0</b></span>
+      <span><i style="background:var(--ok)"></i>手残り <b id="lKeep">¥0</b></span>
+    </div>
+    <div class="year-line"><span>退避を忘れた場合の年末請求目安</span><span class="v" id="yearBill">¥0</span></div>
+  </div>
+</div></header>
+<section class="inputs" id="calc"><div class="wrap">
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">条件を入力</span></div>
+    <div class="card-body"><div class="field-grid">
+      <div class="field"><div class="fl"><label>月額売上</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="sales" value="800000" step="10000"></div></div>
+      <div class="field"><div class="fl"><label>経費率</label><span class="val"><span id="expV">30</span>%</span></div>
+        <input type="range" id="exp" min="0" max="80" step="1" value="30"></div>
+      <div class="field"><div class="fl"><label>所得税率（目安）</label><span class="val"><span id="incV">20</span>%</span></div>
+        <input type="range" id="inc" min="5" max="45" step="1" value="20">
+        <div class="hint">所得水準に応じた目安。5〜45%</div></div>
+      <div class="field"><div class="fl"><label>住民税率</label><span class="val"><span id="resV">10</span>%</span></div>
+        <input type="range" id="res" min="0" max="15" step="0.5" value="10"></div>
+      <div class="field"><div class="fl"><label>事業税率（目安）</label><span class="val"><span id="busV">0</span>%</span></div>
+        <input type="range" id="bus" min="0" max="6" step="0.1" value="0">
+        <div class="hint">所得400万超が目安。該当なければ0</div></div>
+      <div class="field" style="gap:10px">
+        <div class="toggle-row"><span class="cl">課税事業者（インボイス登録）</span><label class="switch"><input type="checkbox" id="taxable"><span class="slider-sw"></span></label></div>
+        <div class="sub-toggle" id="specialWrap"><div class="toggle-row"><span class="cl">2割特例を使う</span><label class="switch"><input type="checkbox" id="special"><span class="slider-sw"></span></label></div></div>
+      </div>
+    </div></div>
+  </div>
+</div></section>
+<section class="memo-sec"><div class="wrap"><div class="memo reveal">
+  <span class="sec-no">JUDGMENT — 判断の順番</span>
+  <h2>入金された瞬間に、<span class="accent">分ける</span>。</h2>
+  <p>税金で破綻する人の多くは、使いすぎて払えなくなるのではなく、「自分の金だと思って使ってしまう」。順番を一つ変えるだけで防げる——入金されたら、まず退避額を別口座に移す。残ったものだけで生活する。退避を「支払い」ではなく「最初に取り分けるもの」に変える。金庫は意志じゃなく仕組みで満たす。</p>
+  <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+</div></div></section>
+<section class="cta"><div class="wrap cta-inner">
+  <h2>次の入金、まず退避額を分けてから使おう。</h2>
+  <a class="btn btn-paper" href="#calc">もう一度計算する ↑</a>
+</div></section>
+<footer><div class="wrap foot-inner">
+  <div><div class="foot-brand">Tax<em>Vault</em></div><div style="margin-top:4px">税金退避シミュレーター</div></div>
+  <div class="foot-tools"><a href="https://truerate.pages.dev/">TrueRate</a><a href="https://quoteforge.pages.dev/">QuoteForge</a><a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a></div>
+  <div>© 2026</div>
+</div></footer>
+<script>
+const $=id=>document.getElementById(id);const fmt=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+[['exp','expV'],['inc','incV'],['res','resV'],['bus','busV']].forEach(([s,l])=>$(s).addEventListener('input',()=>{$(l).textContent=$(s).value;calc();}));
+$('sales').addEventListener('input',calc);
+$('taxable').addEventListener('change',()=>{$('specialWrap').classList.toggle('live',$('taxable').checked);calc();});
+$('special').addEventListener('change',calc);
+function calc(){
+  const S=parseFloat($('sales').value)||0;
+  const e=parseFloat($('exp').value)||0, inc=parseFloat($('inc').value)||0, res=parseFloat($('res').value)||0, bus=parseFloat($('bus').value)||0;
+  const taxable=$('taxable').checked, special=$('special').checked;
+  const expAmt=S*e/100;
+  const income=Math.max(S-expAmt,0);
+  const incAmt=income*inc/100, resAmt=income*res/100, busAmt=income*bus/100;
+  let conAmt=0;
+  if(taxable){conAmt = special ? S*0.02 : S*0.063;}
+  const reserve=conAmt+incAmt+resAmt+busAmt;
+  const keep=S-expAmt-reserve;
+  // stack widths (of S)
+  const tot=S>0?S:1;
+  $('bCon').style.width=(conAmt/tot*100)+'%';$('bInc').style.width=(incAmt/tot*100)+'%';
+  $('bRes').style.width=(resAmt/tot*100)+'%';$('bBus').style.width=(busAmt/tot*100)+'%';
+  $('bExp').style.width=(expAmt/tot*100)+'%';$('bKeep').style.width=Math.max(keep/tot*100,0)+'%';
+  $('lCon').textContent=fmt(conAmt);$('lInc').textContent=fmt(incAmt);$('lRes').textContent=fmt(resAmt);
+  $('lBus').textContent=fmt(busAmt);$('lExp').textContent=fmt(expAmt);$('lKeep').textContent=fmt(keep);
+  $('reserveAmt').textContent=fmt(reserve);
+  $('reservePct').textContent=(S>0?(reserve/S*100).toFixed(0):0)+'%';
+  $('reserveYear').textContent=fmt(reserve*12);
+  $('yearBill').textContent=fmt(reserve*12);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+calc();
+</script>
+</body></html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuoteForge — 欲しい月収から、単価と稼働を逆算する</title>
+<meta name="description" content="欲しい手取り月収から、必要な案件単価・月本数・1日の稼働時間を逆算。目標を上げると稼働が赤ゾーンにはみ出す瞬間を可視化し、現実的な見積もりの物差しを作る。">
+<link rel="canonical" href="https://quoteforge.pages.dev/">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="QuoteForge">
+<meta property="og:title" content="QuoteForge — 欲しい月収から単価と稼働を逆算">
+<meta property="og:description" content="目標手取りから必要単価・本数・1日稼働を逆算。稼働が赤ゾーンにはみ出す瞬間を可視化。">
+<meta property="og:url" content="https://quoteforge.pages.dev/">
+<meta property="og:image" content="https://quoteforge.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://quoteforge.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"QuoteForge","url":"https://quoteforge.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","description":"欲しい手取り月収から必要単価・月本数・1日稼働を逆算するシミュレーター。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"単価の決め方がわかりません","acceptedAnswer":{"@type":"Answer","text":"欲しい手取り月収を決め、手数料・経費・税金退避を乗せて必要売上を出し、それを月本数で割れば単価の下限が逆算できます。感情ではなく生活費から積み上げる順番です。"}},
+{"@type":"Question","name":"1日8時間を超えたらダメですか？","acceptedAnswer":{"@type":"Answer","text":"超えても働けますが、持続可能性の目安として8時間を適正、10時間を注意、12時間以上を危険としています。目標額に対して稼働が危険域に入るなら、単価を上げるか目標を下げるかの判断材料になります。"}},
+{"@type":"Question","name":"順算の時給計算とどう違いますか？","acceptedAnswer":{"@type":"Answer","text":"TrueRateは与えた案件から時給を出す順算、QuoteForgeは欲しい結果から条件を逆算する設計です。見積もりの物差しを作るには逆算が向きます。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;--shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;--ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;--amber:#e0a23a;--mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}.brand-mark em{font-style:normal;color:var(--shu)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}.nav-links a:hover{color:var(--shu)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-shu{background:var(--shu);color:#fff;box-shadow:0 2px 0 var(--shu-dark)}.btn-shu:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(214,59,47,.32),0 2px 0 var(--shu-dark)}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.btn-paper{background:var(--paper);color:var(--shu);box-shadow:0 2px 0 rgba(0,0,0,.2)}.btn-paper:hover{transform:translateY(-2px)}
+.hero{padding:72px 0 36px}.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(38px,5.4vw,64px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--shu);position:relative;white-space:nowrap}h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(214,59,47,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:42ch;margin-bottom:26px}
+.hero-proof{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}.hero-proof span{display:inline-flex;align-items:center;gap:6px}.hero-proof b{color:var(--shu);font-weight:700}
+.gcard{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12)}
+.gcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.gcard-top .lbl{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--sumi-soft);text-transform:uppercase}
+.vchip{font-size:11px;font-weight:800;letter-spacing:.06em;padding:6px 12px;border-radius:2px;transition:all .4s}
+.vchip.ok{background:var(--ok-soft);color:var(--ok)}.vchip.warn{background:#fdf6e8;color:#9a6b12}.vchip.bad{background:#fdecea;color:var(--shu)}
+.gauge-row{margin-bottom:18px}
+.gauge-row .gh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.gauge-row .gh .gn{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--sumi-soft)}
+.gauge-row .gh .gv{font-family:var(--mono);font-weight:600;font-size:18px;transition:color .3s}
+.gauge-row .gh .gv.hot{color:var(--shu)}
+.gauge{position:relative;height:14px;background:var(--paper-2);border-radius:3px}
+.gauge .fill{position:absolute;left:0;top:0;height:100%;border-radius:3px;background:var(--ai);transition:width .55s cubic-bezier(.2,.8,.2,1),background .3s}
+.gauge .fill.hot{background:var(--shu)}
+.gauge .mk{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--sumi);opacity:.5}
+.gauge .mk span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;font-family:var(--mono);color:var(--sumi-soft);white-space:nowrap}
+.sales-line{margin-top:6px;padding-top:16px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--sumi-soft)}
+.sales-line .v{font-family:var(--mono);font-weight:600;color:var(--sumi)}
+.sales-line.err .v{color:var(--shu)}
+.inputs{padding:14px 0 70px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.card-head{padding:15px 22px;border-bottom:1px solid var(--paper-2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.card-title{font-family:var(--mincho);font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px}.card-title::before{content:"";width:4px;height:17px;background:var(--shu);border-radius:1px}
+.seg{display:inline-flex;border:1px solid var(--ledger);border-radius:4px;overflow:hidden}
+.seg button{border:none;background:#fff;padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--sumi-soft);cursor:pointer;font-family:var(--gothic);transition:all .15s}
+.seg button.on{background:var(--sumi);color:#fff}
+.card-body{padding:24px 22px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 26px}
+@media(max-width:680px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .fl{display:flex;justify-content:space-between;align-items:baseline}
+.field .fl label{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)}
+.field .fl .val{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--shu)}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff}
+.num .pre,.num .suf{padding:0 11px;color:var(--sumi-soft);font-size:13px;background:var(--paper);align-self:stretch;display:flex;align-items:center}
+.num .pre{border-right:1px solid var(--ledger)}.num .suf{border-left:1px solid var(--ledger)}
+.num input{border:none;outline:none;padding:10px 11px;font-size:15px;font-family:var(--mono);font-weight:500;width:100%;color:var(--sumi);background:transparent}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--ledger);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;box-shadow:0 1px 4px rgba(214,59,47,.4);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;cursor:pointer}
+.hint{font-size:10.5px;color:var(--sumi-soft)}
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"逆";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#ff9d94}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+.cta{background:var(--shu);color:#fff;padding:72px 0;position:relative;overflow:hidden}
+.cta::before{content:"←";position:absolute;right:50px;top:50%;transform:translateY(-50%);font-size:280px;line-height:1;color:rgba(255,255,255,.08)}
+.cta-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.cta h2{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.35;color:#fff;max-width:20ch}
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}footer a:hover{color:var(--shu)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div><div class="margin-line"></div>
+<nav><div class="nav-inner">
+  <a class="brand" href="#"><span class="brand-mark">Quote<em>Forge</em></span><span class="brand-sub">逆算</span></a>
+  <div class="nav-links"><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a><a class="btn btn-shu" href="#calc">逆算する →</a></div>
+</div></nav>
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="kicker">逆算する道具</span>
+    <h1>その単価、<br><span class="accent">欲しい額</span>から<br>出した？</h1>
+    <p class="hero-lead">単価を「相場」で決めると、欲しい生活費に届かない。欲しい手取り月収から始めて、手数料・経費・税金退避を乗せ、必要な単価と稼働を逆算する。目標を上げるほど、1日の稼働が赤ゾーンにはみ出していきます。</p>
+    <div class="hero-proof"><span><b>✓</b> 登録不要</span><span><b>✓</b> ずっと無料</span><span><b>✓</b> 計算はブラウザ内</span></div>
+  </div>
+  <div class="gcard">
+    <div class="gcard-top"><span class="lbl">逆算結果</span><span class="vchip ok" id="vchip">現実的</span></div>
+    <div class="gauge-row"><div class="gh"><span class="gn">必要な案件単価（税抜）</span><span class="gv" id="gUnitV">¥0</span></div>
+      <div class="gauge"><div class="fill" id="gUnit" style="width:0%"></div></div></div>
+    <div class="gauge-row"><div class="gh"><span class="gn">月あたりの本数</span><span class="gv" id="gPiecesV">0 本</span></div>
+      <div class="gauge"><div class="fill" id="gPieces" style="width:0%"></div></div></div>
+    <div class="gauge-row"><div class="gh"><span class="gn">1日の稼働（月<span id="wdLabel">20</span>日換算）</span><span class="gv" id="gDayV">0 h</span></div>
+      <div class="gauge"><div class="fill" id="gDay" style="width:0%"></div>
+        <div class="mk" style="left:50%"><span>8h</span></div><div class="mk" style="left:75%"><span>12h</span></div></div></div>
+    <div class="sales-line" id="salesLine"><span>必要な月売上（税抜）</span><span class="v" id="salesV">¥0</span></div>
+  </div>
+</div></header>
+<section class="inputs" id="calc"><div class="wrap">
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">欲しい額から逆算</span>
+      <div class="seg" id="modeSeg"><button data-v="pieces" class="on">本数→単価</button><button data-v="unit">単価→本数</button></div></div>
+    <div class="card-body"><div class="field-grid">
+      <div class="field"><div class="fl"><label>欲しい手取り月収</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="target" value="400000" step="10000"></div>
+        <div class="hint">税引後・経費差し引き後に残したい額</div></div>
+      <div class="field"><div class="fl"><label>1案件の平均工数</label><span class="val"><span id="hoursV">40</span> h</span></div>
+        <input type="range" id="hours" min="1" max="300" step="1" value="40"></div>
+      <div class="field" id="piecesField"><div class="fl"><label>月の想定本数</label><span class="val"><span id="piecesV">4</span> 本</span></div>
+        <input type="range" id="pieces" min="1" max="40" step="1" value="4"></div>
+      <div class="field" id="unitField" style="display:none"><div class="fl"><label>想定案件単価</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="unitIn" value="150000" step="5000"></div></div>
+      <div class="field"><div class="fl"><label>月稼働日数</label><span class="val"><span id="wdV">20</span> 日</span></div>
+        <input type="range" id="wd" min="10" max="30" step="1" value="20"></div>
+      <div class="field"><div class="fl"><label>手数料</label><span class="val"><span id="feeV">10</span>%</span></div>
+        <input type="range" id="fee" min="0" max="40" step="0.5" value="10"></div>
+      <div class="field"><div class="fl"><label>経費率</label><span class="val"><span id="expV">10</span>%</span></div>
+        <input type="range" id="exp" min="0" max="60" step="1" value="10"></div>
+      <div class="field"><div class="fl"><label>税金・退避率</label><span class="val"><span id="taxV">25</span>%</span></div>
+        <input type="range" id="tax" min="0" max="60" step="1" value="25">
+        <div class="hint">所得税・住民税・消費税の退避目安を合算</div></div>
+    </div></div>
+  </div>
+</div></section>
+<section class="memo-sec"><div class="wrap"><div class="memo reveal">
+  <span class="sec-no">JUDGMENT — 判断の順番</span>
+  <h2>相場から決めると、<span class="accent">生活</span>が後回しになる。</h2>
+  <p>単価を「このくらいが相場」で決めると、欲しい生活費に届かないまま走り続ける。順番を逆にすると——欲しい手取りを決め、退避を乗せ、必要売上を出し、稼働可能時間で割る——単価の下限が数字で出る。目標を上げて1日稼働が12時間を超えた瞬間、それは単価の問題ではなく設計の問題だとわかる。見積もりは気合じゃなく逆算で。</p>
+  <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+</div></div></section>
+<section class="cta"><div class="wrap cta-inner">
+  <h2>次の見積もり、欲しい額から逆算して出そう。</h2>
+  <a class="btn btn-paper" href="#calc">もう一度逆算する ↑</a>
+</div></section>
+<footer><div class="wrap foot-inner">
+  <div><div class="foot-brand">Quote<em>Forge</em></div><div style="margin-top:4px">逆算見積もりシミュレーター</div></div>
+  <div class="foot-tools"><a href="https://truerate.pages.dev/">TrueRate</a><a href="https://versarate.pages.dev/">VersaRate</a><a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a></div>
+  <div>© 2026</div>
+</div></footer>
+<script>
+const $=id=>document.getElementById(id);const fmt=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+let mode='pieces';
+document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.v;
+  $('piecesField').style.display=mode==='pieces'?'':'none';$('unitField').style.display=mode==='unit'?'':'none';calc();}));
+[['hours','hoursV'],['pieces','piecesV'],['wd','wdV'],['fee','feeV'],['exp','expV'],['tax','taxV']].forEach(([s,l])=>$(s).addEventListener('input',()=>{$(l).textContent=$(s).value;calc();}));
+['target','unitIn'].forEach(id=>$(id).addEventListener('input',calc));
+function calc(){
+  const T=parseFloat($('target').value)||0;
+  const h=Math.max(parseFloat($('hours').value)||1,1);
+  const fee=parseFloat($('fee').value)||0, exp=parseFloat($('exp').value)||0, tax=parseFloat($('tax').value)||0;
+  const wd=Math.max(parseFloat($('wd').value)||1,1);
+  $('wdLabel').textContent=wd;
+  const keepRate=1-fee/100-exp/100-tax/100;
+  const sl=$('salesLine');
+  if(keepRate<=0){sl.classList.add('err');$('salesV').textContent='退避+経費が100%超';setGauges(0,0,0,true);return;}
+  sl.classList.remove('err');
+  const sales=T/keepRate; $('salesV').textContent=fmt(sales);
+  let unit,pieces;
+  if(mode==='pieces'){pieces=Math.max(parseFloat($('pieces').value)||1,1);unit=sales/pieces;}
+  else{unit=Math.max(parseFloat($('unitIn').value)||1,1);pieces=Math.ceil(sales/unit);}
+  const monthH=pieces*h, dayH=monthH/wd;
+  setGauges(unit,pieces,dayH,false);
+}
+function setGauges(unit,pieces,dayH,err){
+  $('gUnitV').textContent=err?'—':fmt(unit);$('gPiecesV').textContent=err?'—':pieces+' 本';$('gDayV').textContent=err?'—':dayH.toFixed(1)+' h';
+  $('gUnit').style.width=Math.min(unit/2000000*100,100)+'%';
+  $('gPieces').style.width=Math.min(pieces/40*100,100)+'%';
+  const dp=Math.min(dayH/16*100,100);$('gDay').style.width=dp+'%';
+  const hot=dayH>12;$('gDay').classList.toggle('hot',hot);$('gDayV').classList.toggle('hot',hot);
+  const chip=$('vchip');
+  if(err){chip.className='vchip bad';chip.textContent='条件を見直して';}
+  else if(dayH<=8){chip.className='vchip ok';chip.textContent='現実的';}
+  else if(dayH<=10){chip.className='vchip warn';chip.textContent='やや厳しい';}
+  else if(dayH<=12){chip.className='vchip warn';chip.textContent='厳しい';}
+  else{chip.className='vchip bad';chip.textContent='物理的に無理';}
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+calc();
+</script>
+</body></html>

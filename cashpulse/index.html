@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CashPulse — 黒字なのに、現金が枯れる月を見抜く</title>
+<meta name="description" content="個人事業主・フリーランス向け。月次の入金・出費から手元現金の推移を折れ線で可視化。支払サイトをずらすと入金が遅れ、黒字でも現金が枯れる月をその場で警告。黒字倒産のリスクを目で見る。">
+<link rel="canonical" href="https://cashpulse-8h9.pages.dev/">
+<meta name="theme-color" content="#d63b2f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CashPulse">
+<meta property="og:title" content="CashPulse — 黒字なのに現金が枯れる月を見抜く">
+<meta property="og:description" content="月次キャッシュフローを折れ線で可視化。支払サイトをずらすと枯渇月が点滅。">
+<meta property="og:url" content="https://cashpulse-8h9.pages.dev/">
+<meta property="og:image" content="https://cashpulse-8h9.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://cashpulse-8h9.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"CashPulse","url":"https://cashpulse-8h9.pages.dev/","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","description":"月次キャッシュフローを折れ線で可視化し、現金枯渇月を警告するシミュレーター。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"黒字なのに現金が足りないのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"売上は計上されても、入金が1〜2ヶ月遅れることがあるからです。その間にも家賃・外注費・税金は出ていく。利益と現金は別物で、このズレが黒字倒産を生みます。"}},
+{"@type":"Question","name":"支払サイトとは何ですか？","acceptedAnswer":{"@type":"Answer","text":"取引が発生してから実際に入金されるまでの期間です。月末締め翌月末払いなら約30日、翌々月末払いなら約60日。サイトが長いほど現金の谷が深くなります。"}},
+{"@type":"Question","name":"どう対策すればいい？","acceptedAnswer":{"@type":"Answer","text":"入金の谷を事前に把握し、その月に向けて現金を積み立てる、前受け・着手金をもらう、支払サイトを短く交渉する、などの手があります。まず谷が何月に来るかを知ることが先です。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;--shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;--ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;--amber:#e0a23a;--mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--shu);color:#fff}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(214,59,47,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}.brand-mark em{font-style:normal;color:var(--shu)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}.nav-links a:hover{color:var(--shu)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-shu{background:var(--shu);color:#fff;box-shadow:0 2px 0 var(--shu-dark)}.btn-shu:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(214,59,47,.32),0 2px 0 var(--shu-dark)}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.btn-paper{background:var(--paper);color:var(--shu);box-shadow:0 2px 0 rgba(0,0,0,.2)}.btn-paper:hover{transform:translateY(-2px)}
+.hero{padding:72px 0 36px}.hero-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:48px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(36px,5.2vw,60px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--shu);position:relative;white-space:nowrap}h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(214,59,47,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:40ch;margin-bottom:26px}
+.hero-proof{display:flex;gap:20px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}.hero-proof span{display:inline-flex;align-items:center;gap:6px}.hero-proof b{color:var(--shu);font-weight:700}
+.chart-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px 22px 18px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12)}
+.chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.chart-head .lbl{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--sumi-soft);text-transform:uppercase}
+.vchip{font-size:11px;font-weight:800;letter-spacing:.06em;padding:6px 12px;border-radius:2px;transition:all .4s}
+.vchip.ok{background:var(--ok-soft);color:var(--ok)}.vchip.bad{background:#fdecea;color:var(--shu);animation:chipflash 1.4s infinite}
+@keyframes chipflash{0%,100%{opacity:1}50%{opacity:.55}}
+.chart-wrap{position:relative}
+svg.flow{width:100%;height:200px;display:block;overflow:visible}
+.flow .grid-l{stroke:var(--line);stroke-width:1}
+.flow .zero-l{stroke:var(--sumi);stroke-width:1.5;stroke-dasharray:4 4;opacity:.5}
+.flow .area-pos{fill:rgba(46,125,67,.10)}.flow .area-neg{fill:rgba(214,59,47,.12)}
+.flow .line{fill:none;stroke:var(--ai);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;transition:all .4s}
+.flow .pt{fill:#fff;stroke:var(--ai);stroke-width:2;transition:all .3s}
+.flow .pt.neg{stroke:var(--shu);fill:var(--shu);animation:ptpulse 1.2s infinite}
+@keyframes ptpulse{0%,100%{r:4}50%{r:6.5}}
+.flow .mlabel{font-family:var(--mono);font-size:9px;fill:var(--sumi-soft)}
+.flow .vlabel{font-family:var(--mono);font-size:9px;fill:var(--sumi-soft)}
+.chart-foot{display:flex;justify-content:space-between;gap:14px;margin-top:12px;flex-wrap:wrap}
+.stat{flex:1;min-width:120px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.stat .sl{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--sumi-soft)}
+.stat .sv{font-family:var(--mono);font-weight:600;font-size:15px;margin-top:2px}
+.stat .sv.neg{color:var(--shu)}.stat .sv.pos{color:var(--ok)}
+.warn-list{margin-top:12px;display:grid;gap:6px}
+.warn-list .w{font-size:12.5px;color:var(--shu);display:flex;gap:8px;align-items:flex-start;background:#fdecea;border-radius:4px;padding:8px 12px}
+.warn-list .w::before{content:"⚠";flex-shrink:0}
+.inputs{padding:14px 0 70px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05)}
+.card-head{padding:15px 22px;border-bottom:1px solid var(--paper-2)}
+.card-title{font-family:var(--mincho);font-weight:700;font-size:17px;display:flex;align-items:center;gap:9px}.card-title::before{content:"";width:4px;height:17px;background:var(--shu);border-radius:1px}
+.card-body{padding:24px 22px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 26px}
+@media(max-width:680px){.field-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field .fl{display:flex;justify-content:space-between;align-items:baseline}
+.field .fl label{font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--sumi-soft)}
+.field .fl .val{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--shu)}
+.num{display:flex;align-items:center;border:1px solid var(--ledger);border-radius:4px;overflow:hidden;background:#fff}
+.num .pre,.num .suf{padding:0 11px;color:var(--sumi-soft);font-size:13px;background:var(--paper);align-self:stretch;display:flex;align-items:center}
+.num .pre{border-right:1px solid var(--ledger)}.num .suf{border-left:1px solid var(--ledger)}
+.num input{border:none;outline:none;padding:10px 11px;font-size:15px;font-family:var(--mono);font-weight:500;width:100%;color:var(--sumi);background:transparent}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--ledger);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;box-shadow:0 1px 4px rgba(214,59,47,.4);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--shu);border:3px solid #fff;cursor:pointer}
+.hint{font-size:10.5px;color:var(--sumi-soft)}
+.site-scale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--sumi-soft);margin-top:3px;font-family:var(--mono)}
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"枯";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no{font-family:var(--mono);font-size:12px;color:var(--shu);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#ff9d94}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+.cta{background:var(--shu);color:#fff;padding:72px 0;position:relative;overflow:hidden}
+.cta::before{content:"〜";position:absolute;right:50px;top:50%;transform:translateY(-50%);font-size:280px;line-height:1;color:rgba(255,255,255,.08)}
+.cta-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.cta h2{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.35;color:#fff;max-width:20ch}
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}.foot-brand em{font-style:normal;color:var(--shu)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}footer a:hover{color:var(--shu)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div><div class="margin-line"></div>
+<nav><div class="nav-inner">
+  <a class="brand" href="#"><span class="brand-mark">Cash<em>Pulse</em></span><span class="brand-sub">現金の脈</span></a>
+  <div class="nav-links"><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a><a class="btn btn-shu" href="#calc">シミュレート →</a></div>
+</div></nav>
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="kicker">可視する道具</span>
+    <h1>黒字なのに、<br><span class="accent">現金</span>が<br>枯れる月。</h1>
+    <p class="hero-lead">売上は立っている。なのに口座が心細い月がある。入金が遅れ、支出は待ってくれない——その谷を折れ線で描く。支払サイトをずらすだけで、黒字の裏で現金が沈む月が見えてくる。</p>
+    <div class="hero-proof"><span><b>✓</b> 登録不要</span><span><b>✓</b> ずっと無料</span><span><b>✓</b> 計算はブラウザ内</span></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-head"><span class="lbl">手元現金の推移（12ヶ月）</span><span class="vchip ok" id="vchip">現金は維持</span></div>
+    <div class="chart-wrap"><svg class="flow" id="svg" viewBox="0 0 320 200" preserveAspectRatio="none"></svg></div>
+    <div class="chart-foot">
+      <div class="stat"><div class="sl">最低残高</div><div class="sv" id="sMin">¥0</div></div>
+      <div class="stat"><div class="sl">期末残高</div><div class="sv" id="sEnd">¥0</div></div>
+      <div class="stat"><div class="sl">累計利益</div><div class="sv" id="sProfit">¥0</div></div>
+    </div>
+    <div class="warn-list" id="warnList"></div>
+  </div>
+</div></header>
+<section class="inputs" id="calc"><div class="wrap">
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">条件を入力</span></div>
+    <div class="card-body"><div class="field-grid">
+      <div class="field"><div class="fl"><label>期首の現金残高</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="open" value="500000" step="50000"></div></div>
+      <div class="field"><div class="fl"><label>月売上（一定と仮定）</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="sales" value="1000000" step="50000"></div></div>
+      <div class="field"><div class="fl"><label>支払サイト</label><span class="val"><span id="siteV">30</span> 日</span></div>
+        <input type="range" id="site" min="0" max="3" step="1" value="1">
+        <div class="site-scale"><span>0</span><span>30</span><span>60</span><span>90</span></div>
+        <div class="hint">入金が何ヶ月遅れるか。長いほど谷が深くなる</div></div>
+      <div class="field"><div class="fl"><label>月固定費</label></div>
+        <div class="num"><span class="pre">¥</span><input type="number" id="fixed" value="300000" step="10000"></div>
+        <div class="hint">家賃・サブスク・保険など</div></div>
+      <div class="field"><div class="fl"><label>売上連動の経費率</label><span class="val"><span id="varV">20</span>%</span></div>
+        <input type="range" id="varr" min="0" max="60" step="1" value="20">
+        <div class="hint">外注・材料など、発生月に支出</div></div>
+      <div class="field"><div class="fl"><label>季節変動</label><span class="val" id="seasonV">なし</span></div>
+        <input type="range" id="season" min="0" max="2" step="1" value="0">
+        <div class="hint">なし / 期初に山 / 期末に山</div></div>
+    </div></div>
+  </div>
+</div></section>
+<section class="memo-sec"><div class="wrap"><div class="memo reveal">
+  <span class="sec-no">JUDGMENT — 判断の順番</span>
+  <h2>損益より先に、<span class="accent">現金</span>を見る。</h2>
+  <p>損益計算書は黒字。なのに現金が枯れる——これが個人事業主の死因の一位。原因は常に「ズレ」。売上は計上されたが入金は2ヶ月先、でも外注費と税金は今月出る。順番を変える——損益を追う前に、現金の谷が何月に来るかを見る。谷が見えれば、前受け・着手金・支払サイトの交渉という手が打てる。見えない谷には、対策も打てない。</p>
+  <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+</div></div></section>
+<section class="cta"><div class="wrap cta-inner">
+  <h2>次の繁忙期、谷が来る月を先に知っておこう。</h2>
+  <a class="btn btn-paper" href="#calc">もう一度シミュレート ↑</a>
+</div></section>
+<footer><div class="wrap foot-inner">
+  <div><div class="foot-brand">Cash<em>Pulse</em></div><div style="margin-top:4px">キャッシュフロー可視化</div></div>
+  <div class="foot-tools"><a href="https://taxvault.pages.dev/">TaxVault</a><a href="https://quoteforge.pages.dev/">QuoteForge</a><a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a></div>
+  <div>© 2026</div>
+</div></footer>
+<script>
+const $=id=>document.getElementById(id);const fmt=n=>'¥'+Math.round(n).toLocaleString('ja-JP');
+const W=320,H=200,PADX=14,PADT=18,PADB=24;
+const MONTHS=['1','2','3','4','5','6','7','8','9','10','11','12'];
+[['site','siteV',v=>[0,30,60,90][v]+''],['varr','varV',v=>v+'%'],['season','seasonV',v=>['なし','期初に山','期末に山'][v]]].forEach(([s,l,fn])=>$(s).addEventListener('input',()=>{$(l).textContent=fn?fn($(s).value):$(s).value;calc();}));
+['open','sales','fixed'].forEach(id=>$(id).addEventListener('input',calc));
+function seasonFactor(m,mode){if(mode==0)return 1;if(mode==1)return 1+0.6*Math.max(0,1-m/4);return 1+0.6*Math.max(0,(m-7)/4);}
+function calc(){
+  const open=parseFloat($('open').value)||0;
+  const sales=parseFloat($('sales').value)||0;
+  const delay=parseInt($('site').value)||0;
+  const fixed=parseFloat($('fixed').value)||0;
+  const varR=parseFloat($('varr').value)||0;
+  const season=parseInt($('season').value)||0;
+  // monthly sales with season
+  const sm=[];for(let m=0;m<12;m++)sm[m]=sales*seasonFactor(m,season);
+  // inflow shifted by delay months
+  const inflow=new Array(12).fill(0);
+  for(let m=0;m<12;m++){if(m+delay<12)inflow[m+delay]+=sm[m];}
+  // outflow in occurrence month
+  const outflow=[];for(let m=0;m<12;m++)outflow[m]=fixed+sm[m]*varR/100;
+  // cash balance
+  const cash=[];let bal=open;let cumProfit=0;
+  for(let m=0;m<12;m++){bal=bal+inflow[m]-outflow[m];cash[m]=bal;cumProfit+=sm[m]-outflow[m];}
+  const minCash=Math.min(...cash);
+  // scale
+  let lo=Math.min(0,minCash,open), hi=Math.max(open,...cash);
+  if(hi===lo){hi=lo+1;}
+  const x=m=>PADX+m*(W-2*PADX)/11;
+  const y=v=>PADT+(1-(v-lo)/(hi-lo))*(H-PADT-PADB);
+  // build svg
+  let s='';
+  // horizontal gridlines (4)
+  for(let i=0;i<=4;i++){const gy=PADT+i*(H-PADT-PADB)/4;s+=`<line class="grid-l" x1="${PADX}" y1="${gy}" x2="${W-PADX}" y2="${gy}"/>`;}
+  // zero line
+  if(lo<0&&hi>0){const zy=y(0);s+=`<line class="zero-l" x1="${PADX}" y1="${zy}" x2="${W-PADX}" y2="${zy}"/>`;}
+  // area path (split pos/neg by zero)
+  let pts=cash.map((v,m)=>[x(m),y(v)]);
+  let lineD=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  // positive area (clamp at zero)
+  const zy=y(Math.max(lo,0));
+  let areaPos='M'+x(0)+' '+zy.toFixed(1)+' '+pts.map(p=>'L'+p[0].toFixed(1)+' '+Math.min(p[1],zy).toFixed(1)).join(' ')+' L'+x(11)+' '+zy.toFixed(1)+' Z';
+  let areaNeg='M'+x(0)+' '+zy.toFixed(1)+' '+pts.map(p=>'L'+p[0].toFixed(1)+' '+Math.max(p[1],zy).toFixed(1)).join(' ')+' L'+x(11)+' '+zy.toFixed(1)+' Z';
+  s+=`<path class="area-pos" d="${areaPos}"/>`;
+  if(lo<0)s+=`<path class="area-neg" d="${areaNeg}"/>`;
+  s+=`<path class="line" d="${lineD}"/>`;
+  // points + month labels
+  cash.forEach((v,m)=>{const neg=v<0;s+=`<circle class="pt${neg?' neg':''}" cx="${x(m).toFixed(1)}" cy="${y(v).toFixed(1)}" r="4"/>`;s+=`<text class="mlabel" x="${x(m).toFixed(1)}" y="${H-8}" text-anchor="middle">${MONTHS[m]}</text>`;});
+  $('svg').innerHTML=s;
+  // stats
+  $('sMin').textContent=fmt(minCash);$('sMin').className='sv'+(minCash<0?' neg':'');
+  $('sEnd').textContent=fmt(cash[11]);$('sEnd').className='sv'+(cash[11]<0?' neg':' pos');
+  $('sProfit').textContent=fmt(cumProfit);$('sProfit').className='sv pos';
+  // warnings
+  const dryMonths=[];cash.forEach((v,m)=>{if(v<0)dryMonths.push(m+1);});
+  const blackRed = cumProfit>0 && minCash<0;
+  const wl=$('warnList');
+  if(dryMonths.length){
+    wl.innerHTML=dryMonths.map(m=>`<div class="w">${m}ヶ月目に現金が枯れます（${fmt(cash[m-1])}）</div>`).join('')
+      +(blackRed?'<div class="w">累計は黒字なのに現金不足＝黒字倒産リスク</div>':'');
+  }else wl.innerHTML='';
+  const chip=$('vchip');
+  if(dryMonths.length){chip.className='vchip bad';chip.textContent=blackRed?'黒字なのに枯渇':'現金枯渇あり';}
+  else{chip.className='vchip ok';chip.textContent='現金は維持';}
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+calc();
+</script>
+</body></html>
