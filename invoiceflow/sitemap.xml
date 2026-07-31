@@ -1,77 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/</loc>
+    <loc>https://junban.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/app</loc>
+    <loc>https://junban.dev/app</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/works</loc>
+    <loc>https://junban.dev/works</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/mixed-tax</loc>
+    <loc>https://junban.dev/guide/mixed-tax</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/regno</loc>
+    <loc>https://junban.dev/guide/regno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/reduced-rate</loc>
+    <loc>https://junban.dev/guide/reduced-rate</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/exempt</loc>
+    <loc>https://junban.dev/guide/exempt</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/retain</loc>
+    <loc>https://junban.dev/guide/retain</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://versarate.pages.dev/</loc>
+    <loc>https://versarate.junban.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://quoteforge.pages.dev/</loc>
+    <loc>https://quoteforge.junban.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://taxvault.pages.dev/</loc>
+    <loc>https://taxvault.junban.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cashpulse-8h9.pages.dev/</loc>
+    <loc>https://cashpulse.junban.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dealshield-5lo.pages.dev/</loc>
+    <loc>https://dealshield.junban.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://invoiceflow-8qd.pages.dev/guide/disclose</loc>
+    <loc>https://junban.dev/guide/disclose</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://deallog.pages.dev/</loc>
+    <loc>https://deallog.junban.dev/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
