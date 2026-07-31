@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DealLog — 取引トラブルを、時系列で記録する</title>
+<meta name="description" content="フリーランスの取引トラブルを時系列で記録し、条文ヒント付きで整理。110番・弁護士相談用の報告書や、未払い時の督促メール・内容証明の下書きをその場で生成。すべてブラウザ内、登録不要・無料。">
+<link rel="canonical" href="https://deallog.pages.dev/">
+<meta name="theme-color" content="#1d4f91">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DealLog">
+<meta property="og:title" content="DealLog — 取引トラブルを、時系列で記録する">
+<meta property="og:description" content="トラブルを時系列で記録→条文ヒント→報告書・督促下書きを生成。フリーランス新法の出典付き。">
+<meta property="og:url" content="https://deallog.pages.dev/">
+<meta property="og:image" content="https://deallog.pages.dev/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://deallog.pages.dev/ogp.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"DealLog","url":"https://deallog.pages.dev/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","description":"フリーランスの取引トラブルを時系列で記録し、報告書・督促下書きを生成するツール。","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"記録したデータはどこに保存されますか？","acceptedAnswer":{"@type":"Answer","text":"お使いのブラウザ内（localStorage）にのみ保存されます。サーバーへの送信は一切行いません。ブラウザのデータを消すと記録も消えるため、重要な記録は報告書としてコピー・保存してください。"}},
+{"@type":"Question","name":"時系列記録はなぜ重要ですか？","acceptedAnswer":{"@type":"Answer","text":"トラブルが深刻化したとき、相談窓口や弁護士に状況を伝えるには「いつ・誰が・何を言った/したか」の時系列が不可欠です。感情が混じらないうちに記録しておくことで、後の判断材料になります。"}},
+{"@type":"Question","name":"督促メールや内容証明は自分で送れますか？","acceptedAnswer":{"@type":"Answer","text":"督促メールは自分で送れます。内容証明郵便は郵便局の窓口またはオンラインで送付できます。このツールは文面の下書きを生成するものであり、送付手続き自体は日本郵便のサービスをご利用ください。"}},
+{"@type":"Question","name":"このツールは法的助言ですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。各条文ヒントは公正取引委員会・e-Gov法令検索へのリンクを添えた確認の補助であり、生成文面は下書きです。個別の法的判断は弁護士やフリーランス・トラブル110番にご相談ください。"}}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sumi:#1c2128;--sumi-soft:#3a4149;--paper:#faf9f5;--paper-2:#f3f1ea;--shu:#d63b2f;--shu-dark:#b32c21;--ai:#1d4f91;--ai-soft:#e8eef7;--ledger:#d8e2f0;--line:#e3e0d6;--ok:#2e7d43;--ok-soft:#e5f3e8;--amber:#e0a23a;--amber-soft:#fdf6e8;--mincho:'Shippori Mincho',serif;--gothic:'Zen Kaku Gothic New',sans-serif;--mono:'IBM Plex Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--gothic);background:var(--paper);color:var(--sumi);line-height:1.7;overflow-x:hidden}
+::selection{background:var(--ai);color:#fff}
+:focus-visible{outline:2px solid var(--ai);outline-offset:2px;border-radius:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+.ledger-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;background:repeating-linear-gradient(to bottom,transparent 0 31px,var(--ledger) 31px 32px),repeating-linear-gradient(to right,transparent 0 31px,rgba(216,226,240,.32) 31px 32px)}
+.margin-line{position:fixed;top:0;bottom:0;left:72px;width:1px;background:rgba(29,79,145,.26);z-index:-1;pointer-events:none}
+@media(max-width:900px){.margin-line{left:28px}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:var(--sumi)}
+.brand-mark{font-family:var(--mincho);font-weight:800;font-size:21px}.brand-mark em{font-style:normal;color:var(--ai)}
+.brand-sub{font-size:10px;letter-spacing:.16em;color:var(--sumi-soft);text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:12.5px;color:var(--sumi-soft);text-decoration:none;letter-spacing:.04em;transition:color .2s}.nav-links a:hover{color:var(--ai)}
+@media(max-width:680px){.nav-links a:not(.btn){display:none}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--gothic);font-weight:700;font-size:13.5px;letter-spacing:.02em;padding:10px 22px;border-radius:4px;text-decoration:none;cursor:pointer;border:none;transition:transform .18s,box-shadow .18s}
+.btn-ai{background:var(--ai);color:#fff;box-shadow:0 2px 0 #14396b}.btn-ai:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(29,79,145,.32),0 2px 0 #14396b}
+.btn-ghost{background:#fff;color:var(--sumi);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--sumi);transform:translateY(-2px)}
+.hero{padding:68px 0 34px}.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:38px}}
+.kicker{display:inline-flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ai);border:1px solid var(--ai);padding:6px 13px;border-radius:2px;background:var(--ai-soft)}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--shu);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+h1{font-family:var(--mincho);font-weight:800;font-size:clamp(36px,5.2vw,60px);line-height:1.22;letter-spacing:.01em;margin:22px 0 20px}
+h1 .accent{color:var(--ai);position:relative;white-space:nowrap}h1 .accent::after{content:"";position:absolute;left:0;right:0;bottom:7px;height:10px;background:rgba(29,79,145,.16);z-index:-1}
+.hero-lead{font-size:15.5px;color:var(--sumi-soft);max-width:42ch;margin-bottom:24px}
+.hero-proof{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--sumi-soft)}.hero-proof span{display:inline-flex;align-items:center;gap:6px}.hero-proof b{color:var(--ai);font-weight:700}
+/* timeline visual */
+.tl-visual{background:#fff;border:1px solid var(--line);border-radius:8px;padding:26px;box-shadow:0 1px 2px rgba(28,33,40,.06),0 20px 44px rgba(28,33,40,.12)}
+.tl-visual-title{font-family:var(--mincho);font-weight:700;font-size:14px;margin-bottom:16px;color:var(--sumi-soft)}
+.tl-line{position:relative;padding-left:28px}
+.tl-line::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--ledger)}
+.tl-dot{position:relative;padding:10px 0 10px 0}
+.tl-dot::before{content:"";position:absolute;left:-24px;top:14px;width:12px;height:12px;border-radius:50%;border:2px solid var(--ai);background:var(--paper)}
+.tl-dot.pin::before{background:var(--shu);border-color:var(--shu)}
+.tl-dot .tl-date{font-family:var(--mono);font-size:11px;color:var(--sumi-soft)}
+.tl-dot .tl-text{font-size:13px;margin-top:2px}
+.tl-dot .tl-ev{font-size:10.5px;color:var(--ai);margin-top:2px}
+/* sections */
+.sec{padding:8px 0 60px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.sec-no{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--sumi);width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-family:var(--mincho);font-weight:700;font-size:22px}
+.sec-sub{font-size:13.5px;color:var(--sumi-soft);margin:0 0 22px 38px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 2px rgba(28,33,40,.05);margin-bottom:18px;overflow:hidden}
+.card-head{padding:14px 22px;border-bottom:1px solid var(--paper-2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card-title{font-family:var(--mincho);font-weight:700;font-size:16px;display:flex;align-items:center;gap:9px}.card-title::before{content:"";width:4px;height:16px;background:var(--ai);border-radius:1px}
+.src{font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--ai);text-decoration:none;border:1px solid var(--ai-soft);background:var(--ai-soft);padding:4px 10px;border-radius:3px;transition:all .18s}
+.src:hover{background:var(--ai);color:#fff}
+.card-body{padding:14px 22px 18px}
+/* form elements */
+.form-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.form-group label{font-size:11.5px;font-weight:700;color:var(--sumi-soft)}
+.form-group input,.form-group select,.form-group textarea{border:1px solid var(--ledger);border-radius:4px;padding:8px 10px;font-size:13.5px;font-family:var(--gothic);color:var(--sumi);background:#fff;transition:border-color .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--ai);box-shadow:0 0 0 3px var(--ai-soft)}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-group.wide{min-width:100%;flex-basis:100%}
+.add-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--gothic);font-weight:700;font-size:13px;padding:10px 20px;border-radius:4px;border:none;cursor:pointer;background:var(--ai);color:#fff;transition:transform .18s,box-shadow .18s}
+.add-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(29,79,145,.25)}
+/* timeline entries */
+.entries{margin-top:18px}
+.entry{display:grid;grid-template-columns:100px 1fr auto;gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--paper-2);position:relative}
+.entry:last-child{border-bottom:none}
+.entry::before{content:"";position:absolute;left:-18px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--ai);border:2px solid var(--paper)}
+.entry.has-ev::before{background:var(--shu);box-shadow:0 0 0 3px rgba(214,59,47,.15)}
+.entry-date{font-family:var(--mono);font-size:12px;color:var(--sumi-soft);padding-top:2px}
+.entry-body .eb-who{font-size:13px;font-weight:700}
+.entry-body .eb-act{font-size:12.5px;color:var(--sumi-soft);margin-top:2px}
+.entry-body .eb-content{font-size:13px;margin-top:4px;white-space:pre-wrap}
+.entry-body .eb-ev{font-size:11px;color:var(--shu);margin-top:4px;font-weight:600}
+.entry-body .eb-law{font-size:11px;color:var(--ai);margin-top:3px}
+.entry-body .eb-law a{color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai-soft)}
+.entry-del{font-size:11px;color:var(--sumi-soft);cursor:pointer;border:none;background:none;padding:4px 8px;border-radius:3px;transition:all .15s}
+.entry-del:hover{color:var(--shu);background:#fdecea}
+/* report */
+.report-box{margin-top:18px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.report-head{background:var(--paper-2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.report-head .rh{font-family:var(--mincho);font-weight:700;font-size:14px}
+.report-body{padding:22px 24px;font-size:13.5px;line-height:1.9;white-space:pre-wrap;background:#fff;max-height:500px;overflow-y:auto}
+.report-law{padding:14px 24px;background:var(--ai-soft);border-top:1px solid var(--line);font-size:12px;color:var(--ai)}
+.report-law a{color:var(--ai);font-weight:700}
+.copy-btn{font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--sumi);cursor:pointer;transition:all .18s}
+.copy-btn:hover{border-color:var(--ai);color:var(--ai)}
+.copy-btn.done{background:var(--ok);color:#fff;border-color:var(--ok)}
+/* demand section */
+.demand-tabs{display:flex;gap:8px;margin-bottom:14px}
+.demand-tab{font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:4px;border:1px solid var(--line);background:var(--paper);cursor:pointer;transition:all .2s}
+.demand-tab.on{border-color:var(--ai);background:var(--ai-soft);color:var(--ai)}
+.demand-tab:hover{border-color:var(--ai)}
+/* disclaimer */
+.disclaimer{margin:24px 0 0;font-size:12px;color:var(--sumi-soft);background:var(--paper-2);border-left:3px solid var(--amber);padding:14px 18px;border-radius:0 6px 6px 0}
+.disclaimer b{color:var(--sumi)}
+.disclaimer a{color:var(--ai)}
+/* memo */
+.memo-sec{padding:0 0 90px}
+.memo{background:var(--sumi);color:var(--paper);border-radius:8px;padding:48px 44px;position:relative;overflow:hidden}
+.memo::after{content:"録";position:absolute;right:-10px;bottom:-50px;font-family:var(--mincho);font-weight:800;font-size:240px;line-height:1;color:rgba(255,255,255,.05)}
+.memo .sec-no2{font-family:var(--mono);font-size:12px;color:var(--ai);letter-spacing:.2em}
+.memo h2{font-family:var(--mincho);font-weight:800;font-size:clamp(24px,3.4vw,38px);line-height:1.4;margin:14px 0 18px;position:relative}
+.memo h2 .accent{color:#7eb3f0}
+.memo p{color:rgba(250,249,245,.72);font-size:15px;max-width:54ch;position:relative}
+.memo .sign{margin-top:22px;font-size:12px;letter-spacing:.08em;color:rgba(250,249,245,.5);position:relative}
+/* support band */
+.support-band{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0}
+.support-inner{max-width:1120px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.support-text{font-size:13px;color:var(--sumi-soft);max-width:50ch}.support-text b{color:var(--sumi);font-weight:700}
+.support-actions{display:flex;gap:10px;flex-wrap:wrap}
+.support-actions a{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--sumi);transition:all .18s}
+.support-actions a:hover{border-color:var(--ai);color:var(--ai);transform:translateY(-2px)}
+footer{background:var(--sumi);color:rgba(250,249,245,.6);padding:40px 0;font-size:12.5px}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot-brand{font-family:var(--mincho);font-weight:800;font-size:17px;color:var(--paper)}.foot-brand em{font-style:normal;color:var(--ai)}
+footer a{color:rgba(250,249,245,.6);text-decoration:none;transition:color .2s}footer a:hover{color:var(--ai)}
+.foot-tools{display:flex;gap:18px;flex-wrap:wrap}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}.reveal.in{opacity:1;transform:none}
+.empty-state{text-align:center;padding:32px 0;color:var(--sumi-soft);font-size:13.5px}
+.counter-badge{font-family:var(--mono);font-size:11px;background:var(--ai-soft);color:var(--ai);padding:3px 8px;border-radius:3px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="ledger-bg"></div><div class="margin-line"></div>
+<nav><div class="nav-inner">
+  <a class="brand" href="#"><span class="brand-mark">Deal<em>Log</em></span><span class="brand-sub">取引の記録</span></a>
+  <div class="nav-links"><a href="https://dealshield-5lo.pages.dev/">DealShield</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a><a class="btn btn-ai" href="#record">記録する →</a></div>
+</div></nav>
+
+<header class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="kicker">記録する道具</span>
+    <h1>感情が混じる前に、<br><span class="accent">時系列</span>で<br>残す。</h1>
+    <p class="hero-lead">トラブルは記録した者から強くなる。いつ・誰が・何を言った/したかを時系列で残し、条文ヒントを確認。相談用の報告書や督促の下書きも、その場で生成できる。</p>
+    <div class="hero-proof"><span><b>✓</b> 登録不要・無料</span><span><b>✓</b> データはブラウザ内のみ</span><span><b>✓</b> 全ヒントに出典条文</span></div>
+  </div>
+  <div class="tl-visual">
+    <div class="tl-visual-title">記録イメージ — 時系列＋証拠ピン</div>
+    <div class="tl-line">
+      <div class="tl-dot"><div class="tl-date">2026-03-01</div><div class="tl-text">契約書を受領。支払期日「90日」の記載あり</div><div class="tl-ev">⚑ 支払期日60日超の可能性</div></div>
+      <div class="tl-dot"><div class="tl-date">2026-04-15</div><div class="tl-text">納品完了。検収連絡なし</div></div>
+      <div class="tl-dot pin"><div class="tl-date">2026-06-20</div><div class="tl-text">「予算がないので半額で」とメール</div><div class="tl-ev">⚑ 買いたたき（5条1項1号）</div></div>
+      <div class="tl-dot"><div class="tl-date">2026-07-01</div><div class="tl-text">督促メール送信（CC: 自社法務）</div></div>
+    </div>
+  </div>
+</div></header>
+
+<section class="sec" id="record"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">1</span><span class="sec-title">時系列記録</span><span class="counter-badge" id="entryCount">0 件</span></div>
+  <p class="sec-sub">トラブルに関わる出来事を、起きた順に記録します。証拠番号をつけると「証拠ピン」が立ち、後の報告書で参照しやすくなります。</p>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">新しい記録を追加</span></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label>日付</label><input type="date" id="fDate"></div>
+        <div class="form-group"><label>行動主体</label><select id="fWho"><option value="相手">相手（発注者）</option><option value="自分">自分（受託者）</option><option value="双方">双方</option><option value="第三者">第三者</option></select></div>
+        <div class="form-group"><label>行動種別</label><select id="fAct"><option value="連絡">連絡（メール/チャット/電話）</option><option value="契約">契約・発注</option><option value="納品">納品・提出</option><option value="支払">支払い</option><option value="要求">要求・指示</option><option value="拒否">拒否・未対応</option><option value="その他">その他</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group wide"><label>内容（何が起きたか。感情は入れず事実だけ）</label><textarea id="fContent" placeholder="例: 「デザインを3案から1案に絞ってほしい。ただし追加費用は出せない」とSlackで連絡あり"></textarea></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>証拠番号（任意: スクショ#1, メール#3 など）</label><input type="text" id="fEv" placeholder="例: スクショ#2"></div>
+        <div class="form-group"><label>被害・未解決点（任意）</label><input type="text" id="fDamage" placeholder="例: 追加作業分の報酬未確定"></div>
+      </div>
+      <button class="add-btn" id="addBtn">＋ 記録を追加</button>
+    </div>
+  </div>
+
+  <div class="entries" id="entriesList"></div>
+
+  <div class="disclaimer">
+    <b>データはブラウザ内（localStorage）にのみ保存されます。</b> サーバーへの送信は一切行いません。ブラウザのキャッシュを消すと記録も消えます。重要な記録は下の「報告書生成」でコピーし、別途保存してください。
+  </div>
+</div></section>
+
+<section class="sec" id="report"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">2</span><span class="sec-title">報告書ジェネレーター</span></div>
+  <p class="sec-sub">記録した時系列を、110番や弁護士への相談用に整形した報告書を生成します。コピーしてそのまま相談窓口に使えます。</p>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">相談先情報（任意・報告書に挿入）</span></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group"><label>あなたの氏名/屋号</label><input type="text" id="rName" placeholder="例: 山田太郎 / YAMADA DESIGN"></div>
+        <div class="form-group"><label>相手の名称</label><input type="text" id="rTarget" placeholder="例: 株式会社○○"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>契約/取引の概要</label><input type="text" id="rSummary" placeholder="例: LP制作（2026年3月〜）"></div>
+        <div class="form-group"><label>請求金額（未払がある場合）</label><input type="text" id="rAmount" placeholder="例: 300,000円"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-box reveal" id="reportBox">
+    <div class="report-head"><span class="rh">生成された報告書</span><button class="copy-btn" id="copyReport">報告書をコピー</button></div>
+    <div class="report-body" id="reportBody"></div>
+    <div class="report-law" id="reportLaw"></div>
+  </div>
+
+  <div style="margin-top:14px;font-size:12px;color:var(--sumi-soft)">
+    相談窓口: <a href="https://www.jftc.go.jp/freelancelaw_2025/index.html" target="_blank" rel="noopener" style="color:var(--ai)">フリーランス・トラブル110番 0120-532-110</a>（平日9:30-16:30 / 無料・匿名・Web相談可・和解あっせん対応）
+  </div>
+</div></section>
+
+<section class="sec" id="demand"><div class="wrap">
+  <div class="sec-head"><span class="sec-no">3</span><span class="sec-title">督促・内容証明 下書き</span></div>
+  <p class="sec-sub">未払いがある場合、段階に応じた督促文面を下書きします。記録から未解決点を自動で拾い、根拠条文を添えます。</p>
+
+  <div class="card reveal">
+    <div class="card-head"><span class="card-title">督促段階を選択</span></div>
+    <div class="card-body">
+      <div class="demand-tabs" id="demandTabs">
+        <div class="demand-tab on" data-d="email">督促メール</div>
+        <div class="demand-tab" data-d="certified">内容証明郵便</div>
+        <div class="demand-tab" data-d="court">支払督促/少額訴訟 メモ</div>
+      </div>
+      <div style="font-size:12px;color:var(--sumi-soft);margin-bottom:12px" id="demandDesc">まずはメールで請求。5〜7営業日の期限を切って送るのが一般的です。</div>
+    </div>
+  </div>
+
+  <div class="report-box reveal" id="demandBox">
+    <div class="report-head"><span class="rh">生成された文面（下書き）</span><button class="copy-btn" id="copyDemand">文面をコピー</button></div>
+    <div class="report-body" id="demandBody"></div>
+    <div class="report-law" id="demandLaw"></div>
+  </div>
+
+  <div style="margin-top:14px;font-size:12px;color:var(--sumi-soft)">
+    内容証明の送付: <a href="https://www.post.japanpost.jp/service/fuka_service/naiyo/index.html" target="_blank" rel="noopener" style="color:var(--ai)">日本郵便 内容証明郵便 ↗</a> ／ 支払督促: <a href="https://www.courts.go.jp/saiban/syurui_minzi/minzi_02_003/index.html" target="_blank" rel="noopener" style="color:var(--ai)">裁判所 支払督促 ↗</a>
+  </div>
+</div></section>
+
+<section class="memo-sec"><div class="wrap"><div class="memo reveal">
+  <span class="sec-no2">JUDGMENT — 判断の順番</span>
+  <h2>記録した者から、<span class="accent">強くなる</span>。</h2>
+  <p>トラブルが起きたとき、最初に消えるのは「正確な記憶」だ。怒りや不安が混じった思い出は、相談窓口でも弁護士でも使いにくい。だから感情が動く前に、事実だけを時系列で残す。証拠番号を振っておけば、後から「あのメール」を特定できる。記録は武器じゃない。あなたの正当性を、第三者に伝えるための地図だ。</p>
+  <div class="sign">— WEBアプリを作る人 / 判断の順番</div>
+</div></div></section>
+
+<div class="support-band"><div class="support-inner">
+  <div class="support-text"><b>このツール、役に立ちましたか？</b> 無料でお届けしています。もし一言もらえたら、次の判断の材料になります。</div>
+  <div class="support-actions"><a id="sbX" href="#" target="_blank" rel="noopener">X で一言</a><a id="sbB" href="#" target="_blank" rel="noopener">はてブで保存</a></div>
+</div></div>
+<script>(function(){var u=location.href.split('#')[0];var e=encodeURIComponent(u);var t=encodeURIComponent('フリーランスの取引トラブルを時系列で記録。報告書・督促下書きも生成。判断の順番でつくられています。');var x=document.getElementById('sbX');if(x)x.href='https://twitter.com/intent/tweet?text='+t+'&url='+e;var b=document.getElementById('sbB');if(b)b.href='https://b.hatena.ne.jp/entry/'+u;})();</script>
+
+<footer><div class="wrap foot-inner">
+  <div><div class="foot-brand">Deal<em>Log</em></div><div style="margin-top:4px">取引トラブル記録</div></div>
+  <div class="foot-tools"><a href="https://dealshield-5lo.pages.dev/">DealShield</a><a href="https://invoiceflow-8qd.pages.dev/">InvoiceFlow</a><a href="https://invoiceflow-8qd.pages.dev/works">つくったもの一覧</a><a href="https://x.com/zs_7583edge" target="_blank" rel="noopener">X ↗</a></div>
+  <div>© 2026</div>
+</div></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const STORAGE_KEY='deallog_entries_v1';
+const SRC_JFTC='https://www.jftc.go.jp/freelancelaw_2025/index.html';
+const SRC_4='https://laws.e-gov.go.jp/law/505AC0000000025';
+const SRC_5='https://www.jftc.go.jp/fllaw.html';
+const SRC_ENFORCE='https://www.jftc.go.jp/fllawenforcementorder.html';
+const SRC_USE='https://www.jftc.go.jp/toriteki/legislation/unyou.html';
+const SRC_110='https://www.jftc.go.jp/freelancelaw_2025/index.html';
+const SRC_POST='https://www.post.japanpost.jp/service/fuka_service/naiyo/index.html';
+const SRC_COURT='https://www.courts.go.jp/saiban/syurui_minzi/minzi_02_003/index.html';
+
+// Law hints by action type
+const LAW_HINTS={
+  '要求':{text:'無償変更・やり直しの要求は5条2項2号の対象になりうる（1ヶ月以上の委託）',url:SRC_5},
+  '拒否':{text:'支払拒否・遅延は4条（支払期日）違反の可能性',url:SRC_4},
+  '支払':{text:'支払期日は受領から60日以内が法定上限',url:SRC_4},
+  '契約':{text:'発注時は8項目の明示義務（書面/電磁的記録）',url:SRC_JFTC}
+};
+
+let entries=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));}
+
+function renderEntries(){
+  $('entryCount').textContent=entries.length+' 件';
+  if(entries.length===0){
+    $('entriesList').innerHTML='<div class="empty-state">まだ記録がありません。上のフォームから最初の1件を追加してください。</div>';
+    return;
+  }
+  const sorted=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+  $('entriesList').innerHTML=sorted.map((e,i)=>{
+    const hint=LAW_HINTS[e.act];
+    const hasEv=!!e.ev;
+    return `<div class="entry ${hasEv?'has-ev':''}">
+      <div class="entry-date">${e.date}</div>
+      <div class="entry-body">
+        <div class="eb-who">${esc(e.who)} — ${esc(e.act)}</div>
+        <div class="eb-content">${esc(e.content)}</div>
+        ${e.ev?'<div class="eb-ev">⚑ 証拠: '+esc(e.ev)+'</div>':''}
+        ${e.damage?'<div class="eb-act">未解決: '+esc(e.damage)+'</div>':''}
+        ${hint?'<div class="eb-law">条文ヒント: <a href="'+hint.url+'" target="_blank" rel="noopener">'+hint.text+' ↗</a></div>':''}
+      </div>
+      <button class="entry-del" data-idx="${entries.indexOf(e)}" title="削除">✕</button>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.entry-del').forEach(btn=>btn.addEventListener('click',()=>{
+    const idx=parseInt(btn.dataset.idx);
+    if(confirm('この記録を削除しますか？')){entries.splice(idx,1);save();renderEntries();genReport();genDemand();}
+  }));
+}
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+$('addBtn').addEventListener('click',()=>{
+  const date=$('fDate').value;
+  const content=$('fContent').value.trim();
+  if(!date||!content){alert('日付と内容は必須です。');return;}
+  entries.push({
+    date,
+    who:$('fWho').value,
+    act:$('fAct').value,
+    content,
+    ev:$('fEv').value.trim(),
+    damage:$('fDamage').value.trim()
+  });
+  save();renderEntries();genReport();genDemand();
+  $('fContent').value='';$('fEv').value='';$('fDamage').value='';
+});
+
+// Set default date to today
+$('fDate').value=new Date().toISOString().slice(0,10);
+
+// Report generator
+function genReport(){
+  const name=$('rName').value.trim()||'（氏名/屋号）';
+  const target=$('rTarget').value.trim()||'（相手名称）';
+  const summary=$('rSummary').value.trim()||'（取引概要）';
+  const amount=$('rAmount').value.trim();
+  const sorted=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+
+  let txt='【取引トラブル相談用 時系列報告書】\n';
+  txt+='作成日: '+new Date().toLocaleDateString('ja-JP')+'\n';
+  txt+='相談者: '+name+'\n';
+  txt+='相手方: '+target+'\n';
+  txt+='取引概要: '+summary+'\n';
+  if(amount) txt+='請求金額: '+amount+'\n';
+  txt+='記録件数: '+sorted.length+'件\n\n';
+  txt+='━━━ 時系列 ━━━\n\n';
+  sorted.forEach((e,i)=>{
+    txt+=(i+1)+'. ['+e.date+'] '+e.who+' / '+e.act+'\n';
+    txt+='   '+e.content+'\n';
+    if(e.ev) txt+='   証拠: '+e.ev+'\n';
+    if(e.damage) txt+='   未解決: '+e.damage+'\n';
+    txt+='\n';
+  });
+  txt+='━━━ 相談事項 ━━━\n';
+  txt+='上記の通り、取引先との間でトラブルが発生しております。\n';
+  txt+='法的な観点からの助言をいただきたく、ご相談申し上げます。\n';
+
+  $('reportBody').textContent=txt;
+  $('reportLaw').innerHTML='関連条文: <a href="'+SRC_4+'" target="_blank" rel="noopener">4条（支払期日）↗</a> / <a href="'+SRC_5+'" target="_blank" rel="noopener">5条（不利益取扱い禁止）↗</a> / <a href="'+SRC_USE+'" target="_blank" rel="noopener">運用基準 ↗</a> / 相談: <a href="'+SRC_110+'" target="_blank" rel="noopener">110番 0120-532-110 ↗</a>';
+}
+
+['rName','rTarget','rSummary','rAmount'].forEach(id=>$(id).addEventListener('input',genReport));
+
+$('copyReport').addEventListener('click',()=>{
+  navigator.clipboard.writeText($('reportBody').textContent).then(()=>{$('copyReport').classList.add('done');$('copyReport').textContent='コピーしました ✓';setTimeout(()=>{$('copyReport').classList.remove('done');$('copyReport').textContent='報告書をコピー';},2000);}).catch(()=>{});
+});
+
+// Demand generator
+let demandMode='email';
+document.querySelectorAll('#demandTabs .demand-tab').forEach(tab=>tab.addEventListener('click',()=>{
+  document.querySelectorAll('#demandTabs .demand-tab').forEach(t=>t.classList.remove('on'));
+  tab.classList.add('on');
+  demandMode=tab.dataset.d;
+  genDemand();
+}));
+
+function genDemand(){
+  const name=$('rName').value.trim()||'（氏名/屋号）';
+  const target=$('rTarget').value.trim()||'（相手名称）';
+  const summary=$('rSummary').value.trim()||'（取引概要）';
+  const amount=$('rAmount').value.trim()||'（金額）';
+  const sorted=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+  const unresolved=sorted.filter(e=>e.damage).map(e=>e.damage);
+
+  let body='',law='',desc='';
+
+  if(demandMode==='email'){
+    desc='まずはメールで請求。5〜7営業日の期限を切って送るのが一般的です。';
+    body='件名: 【ご請求】'+summary+' の報酬お支払いのお願い\n\n';
+    body+=target+' 御中\n\n';
+    body+='お世話になっております。'+name+'です。\n\n';
+    body+='表題の件、'+summary+'につきまして、納品完了よりお支払いをいただいておりません。\n';
+    body+='請求金額: '+amount+'\n\n';
+    if(unresolved.length>0){
+      body+='未解決事項:\n';
+      unresolved.forEach(u=>body+='・'+u+'\n');
+      body+='\n';
+    }
+    body+='つきましては、本メール到着日より7営業日以内にお支払いいただきたくお願い申し上げます。\n';
+    body+='お支払いが確認できない場合、やむを得ず次の段階（内容証明郵便による請求）に移行せざるを得ません。\n\n';
+    body+='お忙しいところ恐縮ですが、ご対応のほどよろしくお願いいたします。\n\n';
+    body+=name+'\n';
+    law='根拠: <a href="'+SRC_4+'" target="_blank" rel="noopener">フリーランス法 4条（支払期日: 受領から60日以内）↗</a>';
+  }else if(demandMode==='certified'){
+    desc='内容証明郵便は「いつ・どんな文書を・誰に送ったか」を郵便局が証明する制度。法的効力自体は普通郵便と同じですが、後の裁判で証拠力が高まります。';
+    body='令和  年  月  日\n\n';
+    body+=target+'\n';
+    body+='代表取締役  ○○○○ 殿\n\n';
+    body+=name+'\n';
+    body+='住所: （あなたの住所）\n\n';
+    body+='　　　　　　請求書\n\n';
+    body+='貴社との間の'+summary+'に係る報酬として、下記金額を請求いたします。\n\n';
+    body+='記\n\n';
+    body+='1. 請求金額　金'+amount+'\n';
+    body+='2. 支払期限　本書面到達日より14日以内\n';
+    body+='3. 振込先　　（銀行名・支店名・口座番号・口座名義）\n\n';
+    if(unresolved.length>0){
+      body+='4. 未解決事項\n';
+      unresolved.forEach((u,i)=>body+='   ('+(i+1)+') '+u+'\n');
+      body+='\n';
+    }
+    body+='上記期限までにお支払いがない場合、法的措置（支払督促申立て、少額訴訟等）を講じざるを得ない旨、あらかじめ申し添えます。\n\n';
+    body+='以上\n';
+    law='送付方法: <a href="'+SRC_POST+'" target="_blank" rel="noopener">日本郵便 内容証明郵便 ↗</a>（配達証明付きを推奨） / 根拠: <a href="'+SRC_4+'" target="_blank" rel="noopener">4条 ↗</a>・<a href="'+SRC_5+'" target="_blank" rel="noopener">5条 ↗</a>';
+  }else{
+    desc='支払督促は裁判所を通じた簡易な金銭請求手続き。相手から異議がなければ確定判決と同等の効力。少額訴訟は60万円以下の金銭請求を1回の期日で審理。';
+    body='【支払督促 / 少額訴訟 準備メモ】\n\n';
+    body+='■ 申立人: '+name+'\n';
+    body+='■ 相手方: '+target+'\n';
+    body+='■ 請求金額: '+amount+'\n';
+    body+='■ 取引概要: '+summary+'\n\n';
+    body+='■ 時系列証拠（全'+sorted.length+'件）:\n';
+    sorted.forEach((e,i)=>{
+      body+=(i+1)+'. '+e.date+' / '+e.who+' / '+e.act+' — '+e.content.slice(0,60)+(e.content.length>60?'...':'')+'\n';
+      if(e.ev) body+='   証拠: '+e.ev+'\n';
+    });
+    body+='\n■ 選択基準:\n';
+    body+='・支払督促: 相手が異議を出さなければ迅速に強制執行可能。費用安。\n';
+    body+='・少額訴訟: 60万円以下。1回の期日で結審。口頭弁論あり。\n';
+    body+='・通常訴訟: 60万円超、または複雑な争点がある場合。\n\n';
+    body+='■ 管轄裁判所: 相手方の住所地を管轄する簡易裁判所\n';
+    body+='■ 必要書類: 申立書、契約書/発注書、納品証拠、請求書、督促メールの写し\n';
+    law='手続き: <a href="'+SRC_COURT+'" target="_blank" rel="noopener">裁判所 支払督促 ↗</a> / <a href="https://www.courts.go.jp/saiban/syurui_minzi/minzi_02_002/index.html" target="_blank" rel="noopener">少額訴訟 ↗</a>';
+  }
+
+  $('demandDesc').textContent=desc;
+  $('demandBody').textContent=body;
+  $('demandLaw').innerHTML=law;
+}
+
+$('copyDemand').addEventListener('click',()=>{
+  navigator.clipboard.writeText($('demandBody').textContent).then(()=>{$('copyDemand').classList.add('done');$('copyDemand').textContent='コピーしました ✓';setTimeout(()=>{$('copyDemand').classList.remove('done');$('copyDemand').textContent='文面をコピー';},2000);}).catch(()=>{});
+});
+
+// Init
+renderEntries();
+genReport();
+genDemand();
+
+// Reveal animation
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
