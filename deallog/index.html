@@ -390,7 +390,7 @@ function genReport(){
   $('reportLaw').innerHTML='関連条文: <a href="'+SRC_4+'" target="_blank" rel="noopener">4条（支払期日）↗</a> / <a href="'+SRC_5+'" target="_blank" rel="noopener">5条（不利益取扱い禁止）↗</a> / <a href="'+SRC_USE+'" target="_blank" rel="noopener">運用基準 ↗</a> / 相談: <a href="'+SRC_110+'" target="_blank" rel="noopener">110番 0120-532-110 ↗</a>';
 }
 
-['rName','rTarget','rSummary','rAmount'].forEach(id=>$(id).addEventListener('input',genReport));
+['rName','rTarget','rSummary','rAmount'].forEach(id=>$(id).addEventListener('input',()=>{genReport();genDemand();}));
 
 $('copyReport').addEventListener('click',()=>{
   navigator.clipboard.writeText($('reportBody').textContent).then(()=>{$('copyReport').classList.add('done');$('copyReport').textContent='コピーしました ✓';setTimeout(()=>{$('copyReport').classList.remove('done');$('copyReport').textContent='報告書をコピー';},2000);}).catch(()=>{});
