@@ -1,0 +1,12 @@
+name = "junban-social-scheduler"
+main = "src/index.mjs"
+compatibility_date = "2026-08-02"
+
+# 毎分、期限を過ぎた予約を配信します。時刻はDBへUTCで保存します。
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "junban-social-scheduler"
+database_id = "e83b8c45-a364-4d34-8aa0-d2ca2bfc2eb4"
