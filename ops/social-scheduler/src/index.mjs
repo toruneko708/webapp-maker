@@ -30,8 +30,18 @@ function linkFacets(text) {
   return facets;
 }
 
+async function timedFetch(input, init = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20_000);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function blueskySession(env) {
-  const response = await fetch('https://bsky.social/xrpc/com.atproto.server.createSession', {
+  const response = await timedFetch('https://bsky.social/xrpc/com.atproto.server.createSession', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ identifier: env.BLUESKY_HANDLE?.trim(), password: env.BLUESKY_APP_PASSWORD?.trim() })
@@ -50,7 +60,7 @@ async function postToBluesky(env, text) {
   };
   const facets = linkFacets(text);
   if (facets.length) record.facets = facets;
-  const response = await fetch('https://bsky.social/xrpc/com.atproto.repo.createRecord', {
+  const response = await timedFetch('https://bsky.social/xrpc/com.atproto.repo.createRecord', {
     method: 'POST',
     headers: {
       authorization: `Bearer ${session.accessJwt}`,
@@ -71,15 +81,15 @@ async function notifyDiscord(env, task, blueskyUri) {
     allowed_mentions: { parse: ['everyone'] }
   }));
   form.append('files[0]', new Blob([copyText], { type: 'text/plain; charset=utf-8' }), 'x-post.txt');
-  const response = await fetch(env.DISCORD_WEBHOOK_URL?.trim(), { method: 'POST', body: form });
+  const response = await timedFetch(env.DISCORD_WEBHOOK_URL?.trim(), { method: 'POST', body: form });
   if (!response.ok) throw new Error(`Discord notification failed (${response.status})`);
   return response;
 }
 
 async function dispatchTask(env, task) {
   const claimed = await env.DB.prepare(
-    "UPDATE scheduled_posts SET status = 'processing', attempts = attempts + 1 WHERE id = ? AND status = 'queued'"
-  ).bind(task.id).run();
+    "UPDATE scheduled_posts SET status = 'processing', attempts = attempts + 1, last_error = ? WHERE id = ? AND status = 'queued'"
+  ).bind(new Date().toISOString(), task.id).run();
   if (!claimed.meta?.changes) return;
 
   const current = await env.DB.prepare('SELECT * FROM scheduled_posts WHERE id = ?').bind(task.id).first();
@@ -90,7 +100,8 @@ async function dispatchTask(env, task) {
     if (!blueskyUri) {
       const result = await postToBluesky(env, current.bluesky_text);
       blueskyUri = result.uri;
-      await env.DB.prepare('UPDATE scheduled_posts SET bluesky_uri = ? WHERE id = ?').bind(blueskyUri, current.id).run();
+      await env.DB.prepare('UPDATE scheduled_posts SET bluesky_uri = ?, last_error = ? WHERE id = ?')
+        .bind(blueskyUri, new Date().toISOString(), current.id).run();
     }
     await notifyDiscord(env, current, blueskyUri);
     await env.DB.prepare(
@@ -105,10 +116,21 @@ async function dispatchTask(env, task) {
 
 async function dispatchDue(env) {
   const now = new Date().toISOString();
+  const staleBefore = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+  await env.DB.prepare(
+    "UPDATE scheduled_posts SET status = 'queued', last_error = 'Retrying stale processing lease' WHERE status = 'processing' AND (last_error IS NULL OR last_error < ?)"
+  ).bind(staleBefore).run();
   const { results } = await env.DB.prepare(
     "SELECT * FROM scheduled_posts WHERE status = 'queued' AND run_at <= ? ORDER BY run_at LIMIT 10"
   ).bind(now).all();
   await Promise.all(results.map(task => dispatchTask(env, task)));
+}
+
+async function retryTask(id, env) {
+  const result = await env.DB.prepare(
+    "UPDATE scheduled_posts SET status = 'queued', last_error = 'Manually retried' WHERE id = ? AND status != 'sent'"
+  ).bind(id).run();
+  return result.meta?.changes ? json({ ok: true, id }) : json({ error: 'Task not found or already sent' }, 404);
 }
 
 async function createTask(request, env) {
@@ -138,6 +160,8 @@ export default {
     if (url.pathname === '/health') return json({ ok: true });
     if (!isAuthorized(request, env)) return unauthorized();
     if (request.method === 'POST' && url.pathname === '/tasks') return createTask(request, env);
+    const retryMatch = url.pathname.match(/^\/tasks\/([^/]+)\/retry$/);
+    if (request.method === 'POST' && retryMatch) return retryTask(retryMatch[1], env);
     if (request.method === 'GET' && url.pathname === '/tasks') {
       const { results } = await env.DB.prepare(
         'SELECT id, run_at, bluesky_text, x_text, status, bluesky_uri, attempts, last_error, created_at, sent_at FROM scheduled_posts ORDER BY run_at DESC LIMIT 50'
