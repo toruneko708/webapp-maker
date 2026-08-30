@@ -1,31 +1,33 @@
-# webapp-maker
+# Web App Maker
 
-「WEBアプリを作る人」がつくった道具たち。
-正解より、判断の順番で。
+小さな業務課題を、すぐ使えるWebツールとして形にするプロジェクト集です。
 
-## 入っているもの
+## Portfolio
 
-| パス | 中身 | 公開先 |
+| Project | What it does | Demo |
 |---|---|---|
-| `invoiceflow/` | 適格請求書ジェネレーター + つくったもの一覧 (works) | https://invoiceflow-8qd.pages.dev |
+| `invoiceflow/` | 適格請求書ジェネレーター / 制作物一覧 | https://invoiceflow-8qd.pages.dev |
 | `truerate/` | 実質時給シミュレーター | https://truerate.pages.dev |
 | `tekicheck/` | 適格請求書チェッカー | https://tekicheck.pages.dev |
-| `ops/` | 運用メモ・SNS下書き・ブランド画像 | — |
 
-## デプロイ
+## What this repository demonstrates
 
-各アプリは Cloudflare Pages（静的）。リポジトリのルートから:
+- 要件を小さく切り出し、実用最小単位まで落とし込む設計
+- 静的Webアプリの企画・実装・改善
+- Cloudflare Pagesを使った軽量デプロイ
+- 生成AI/Codexを含む開発ワークフローの活用
+- 実装だけでなく、公開後の改善・運用まで含めたプロダクト設計
 
-```
+## Deployment
+
+各アプリはCloudflare Pagesで公開しています。リポジトリのルートから以下でデプロイできます。
+
+```bash
 npx wrangler pages deploy invoiceflow --project-name invoiceflow --commit-dirty=true
 npx wrangler pages deploy truerate    --project-name truerate    --commit-dirty=true
 npx wrangler pages deploy tekicheck   --project-name tekicheck   --commit-dirty=true
 ```
 
-## 判断メモ
+## Notes
 
-各アプリの「なぜその順で判断したか」は works ページに1行ずつ添えている。
-https://invoiceflow-8qd.pages.dev/works
-
----
-© 2026 — 判断の順番
+このリポジトリには複数の小規模Webアプリと開発・運用用ファイルが含まれます。公開ポートフォリオとして見る場合は、上記3プロジェクトを代表作として参照してください。
